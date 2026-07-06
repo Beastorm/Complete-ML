@@ -464,6 +464,7 @@
             A clean index of all generated HTML notes. Search, filter by section, mark lessons as done,
             and open any lesson directly.
           </p>
+          <p style="margin-top:14px;"><a href="https://beastorm.github.io/Complete-ML/" style="color:white;font-weight:1000;text-decoration:underline;">View live site</a></p>
         </div>
         <div class="hero-panel">
           <div class="stat-grid">
@@ -506,6 +507,8 @@
   </main>
 
   <script>
+    const BASE_URL = 'https://beastorm.github.io/Complete-ML/';
+
     const lessons = [
       {
         no: '01',
@@ -727,7 +730,7 @@
             </div>
             <div class="tags">${tags}<span class="tag">${groupLabels[lesson.group]}</span></div>
             <div class="actions">
-              <a class="open-link" href="${lesson.file}">Open lesson →</a>
+              <a class="open-link" href="${BASE_URL}${lesson.file}">Open lesson →</a>
             </div>
             <div class="file-name">${lesson.file}</div>
           </article>
@@ -801,6 +804,5 @@
 
     renderCards();
   </script>
-<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body>
 </html>
