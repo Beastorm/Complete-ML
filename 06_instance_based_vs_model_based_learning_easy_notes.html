@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>06 - Instance-Based vs Model-Based Learning | Easy Notes</title>
+  <style>
+    :root {
+      --bg-1: #f5f3ff;
+      --bg-2: #ecfeff;
+      --ink: #172033;
+      --muted: #64748b;
+      --primary: #7c3aed;
+      --primary-2: #a855f7;
+      --blue: #4f46e5;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --orange: #f59e0b;
+      --red: #ef4444;
+      --pink: #ec4899;
+      --teal: #14b8a6;
+      --card: rgba(255, 255, 255, 0.88);
+      --border: rgba(15, 23, 42, 0.10);
+      --shadow: 0 22px 60px rgba(15, 23, 42, 0.12);
+      --radius: 26px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      line-height: 1.7;
+      background:
+        radial-gradient(circle at 10% 7%, rgba(124, 58, 237, 0.20), transparent 30%),
+        radial-gradient(circle at 92% 6%, rgba(6, 182, 212, 0.18), transparent 31%),
+        radial-gradient(circle at 88% 88%, rgba(236, 72, 153, 0.13), transparent 30%),
+        radial-gradient(circle at 12% 88%, rgba(245, 158, 11, 0.14), transparent 28%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    }
+
+    .page {
+      width: min(1140px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 64px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 36px;
+      padding: 56px 38px;
+      color: white;
+      background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(76, 29, 149, 0.94)),
+        linear-gradient(45deg, #0f172a, #4c1d95);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 370px;
+      height: 370px;
+      border-radius: 50%;
+      right: -130px;
+      top: -130px;
+      background: rgba(168, 85, 247, 0.23);
+    }
+
+    .hero::after {
+      content: "06";
+      position: absolute;
+      right: -12px;
+      bottom: -78px;
+      font-size: 13rem;
+      line-height: 1;
+      font-weight: 1000;
+      letter-spacing: -0.10em;
+      color: rgba(255, 255, 255, 0.06);
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1.22fr 0.9fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      margin-bottom: 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      font-weight: 900;
+      backdrop-filter: blur(12px);
+    }
+
+    h1 {
+      font-size: clamp(2.05rem, 6.6vw, 4.9rem);
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+      margin-bottom: 18px;
+    }
+
+    .hero p {
+      max-width: 780px;
+      color: rgba(255, 255, 255, 0.90);
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    }
+
+    .hero-visual {
+      min-height: 330px;
+      border-radius: 32px;
+      padding: 22px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.11);
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      backdrop-filter: blur(14px);
+    }
+
+    .split-visual {
+      width: min(340px, 78vw);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      animation: float 4.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .visual-card {
+      min-height: 235px;
+      padding: 18px;
+      border-radius: 24px;
+      display: grid;
+      align-content: center;
+      gap: 10px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), 0 16px 30px rgba(15,23,42,0.16);
+    }
+
+    .visual-card.instance {
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.95), rgba(124, 58, 237, 0.9));
+    }
+
+    .visual-card.model {
+      background: linear-gradient(135deg, rgba(20, 184, 166, 0.95), rgba(6, 182, 212, 0.9));
+    }
+
+    .visual-card .big-emoji {
+      font-size: 3rem;
+      filter: drop-shadow(0 12px 16px rgba(15,23,42,0.18));
+    }
+
+    .visual-card strong {
+      display: block;
+      font-size: 1.08rem;
+      line-height: 1.2;
+    }
+
+    .visual-card small {
+      color: rgba(255,255,255,0.88);
+      font-weight: 800;
+      line-height: 1.35;
+    }
+
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 22px 0 0;
+    }
+
+    .toc a {
+      text-decoration: none;
+      color: #581c87;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .toc a:hover {
+      transform: translateY(-2px);
+      background: white;
+    }
+
+    section {
+      margin-top: 30px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid var(--border);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    h2 {
+      font-size: clamp(1.55rem, 3.3vw, 2.4rem);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    h3 {
+      font-size: 1.22rem;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin-bottom: 7px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .note {
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 20px;
+      border-left: 7px solid var(--primary-2);
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.10), rgba(6, 182, 212, 0.09));
+      color: #581c87;
+      font-size: 1.13rem;
+      font-weight: 900;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .mini-card {
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .mini-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 26px 64px rgba(15, 23, 42, 0.15);
+    }
+
+    .mini-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 7px;
+      background: var(--top, var(--primary-2));
+    }
+
+    .emoji-box {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, rgba(124, 58, 237, 0.12), rgba(6, 182, 212, 0.12));
+      border: 1px solid var(--border);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 12px;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+
+    .flow-4 {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+      gap: 12px;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+
+    .flow-box {
+      min-height: 122px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border-radius: 22px;
+      padding: 18px;
+      color: white;
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+      font-weight: 900;
+    }
+
+    .flow-box strong {
+      display: block;
+      font-size: 1.27rem;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .f-purple { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+    .f-pink { background: linear-gradient(135deg, #f472b6, #db2777); }
+    .f-blue { background: linear-gradient(135deg, #818cf8, #4f46e5); }
+    .f-cyan { background: linear-gradient(135deg, #22d3ee, #0891b2); }
+    .f-teal { background: linear-gradient(135deg, #2dd4bf, #0f766e); }
+    .f-orange { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .f-green { background: linear-gradient(135deg, #4ade80, #16a34a); }
+    .f-red { background: linear-gradient(135deg, #fb7185, #e11d48); }
+
+    .arrow {
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      font-size: 1.9rem;
+      font-weight: 1000;
+    }
+
+    .list {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 11px 12px;
+      border-radius: 15px;
+      background: rgba(248, 250, 252, 0.88);
+      border: 1px solid rgba(100, 116, 139, 0.12);
+    }
+
+    .tick {
+      color: #16a34a;
+      font-weight: 1000;
+    }
+
+    .warn {
+      color: var(--red);
+      font-weight: 1000;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 16px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 800px;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+
+    th {
+      text-align: left;
+      padding: 10px 14px;
+      color: #581c87;
+      font-size: 0.92rem;
+    }
+
+    td {
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.84);
+      border-top: 1px solid rgba(100, 116, 139, 0.13);
+      border-bottom: 1px solid rgba(100, 116, 139, 0.13);
+      vertical-align: top;
+    }
+
+    td:first-child {
+      border-left: 1px solid rgba(100, 116, 139, 0.13);
+      border-radius: 16px 0 0 16px;
+      font-weight: 1000;
+      color: #581c87;
+    }
+
+    td:last-child {
+      border-right: 1px solid rgba(100, 116, 139, 0.13);
+      border-radius: 0 16px 16px 0;
+    }
+
+    .data-points {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(248, 250, 252, 0.95), rgba(255, 255, 255, 0.82));
+      border: 1px solid rgba(100, 116, 139, 0.14);
+    }
+
+    .point {
+      height: 42px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-weight: 1000;
+      box-shadow: 0 10px 18px rgba(15, 23, 42, 0.12);
+    }
+
+    .yes { background: linear-gradient(135deg, #4ade80, #16a34a); }
+    .no { background: linear-gradient(135deg, #fb7185, #e11d48); }
+    .new { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #1f2937; }
+
+    .boundary-box {
+      position: relative;
+      min-height: 280px;
+      margin-top: 18px;
+      overflow: hidden;
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.10) 0%, rgba(236, 72, 153, 0.10) 48%, rgba(20, 184, 166, 0.12) 48%, rgba(20, 184, 166, 0.12) 100%);
+      border: 1px solid rgba(100, 116, 139, 0.14);
+    }
+
+    .boundary-line {
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      top: 50%;
+      height: 6px;
+      border-radius: 999px;
+      background: #581c87;
+      transform: rotate(-18deg);
+      box-shadow: 0 10px 24px rgba(88, 28, 135, 0.22);
+    }
+
+    .b-point {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-size: 0.8rem;
+      color: white;
+      font-weight: 1000;
+      box-shadow: 0 10px 20px rgba(15,23,42,0.16);
+    }
+
+    .label-chip {
+      position: absolute;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid rgba(100,116,139,0.18);
+      font-weight: 1000;
+      color: #581c87;
+      box-shadow: 0 12px 22px rgba(15,23,42,0.10);
+    }
+
+    .summary {
+      position: relative;
+      overflow: hidden;
+      color: white;
+      background: linear-gradient(135deg, #0f172a, #581c87);
+      border: none;
+    }
+
+    .summary::after {
+      content: "LEARN";
+      position: absolute;
+      right: -10px;
+      bottom: -44px;
+      font-size: 6.2rem;
+      font-weight: 1000;
+      letter-spacing: -0.08em;
+      color: rgba(255, 255, 255, 0.055);
+      line-height: 1;
+    }
+
+    .summary h2,
+    .summary ul {
+      position: relative;
+      z-index: 2;
+    }
+
+    .summary ul {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .summary li {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .grid-2,
+      .grid-3,
+      .flow,
+      .flow-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+
+      .split-visual {
+        grid-template-columns: 1fr;
+      }
+
+      .data-points {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 22px, 1140px);
+        padding-top: 12px;
+      }
+
+      .hero {
+        padding: 36px 22px;
+        border-radius: 28px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .summary::after {
+        font-size: 4.6rem;
+      }
+    }
+
+    @media print {
+      body { background: white; }
+      .toc { display: none; }
+      .hero,
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="badge">📘 06 • Easy ML Notes</div>
+          <h1>Instance-Based vs Model-Based Learning</h1>
+          <p>
+            This video explains Machine Learning types based on one question:
+            does the algorithm simply remember examples, or does it learn a general rule/model from them?
+          </p>
+        </div>
+        <div class="hero-visual" aria-label="Instance based versus model based visual">
+          <div class="split-visual">
+            <div class="visual-card instance">
+              <div class="big-emoji">🧠</div>
+              <strong>Instance-Based</strong>
+              <small>Memorize examples and compare with new data</small>
+            </div>
+            <div class="visual-card model">
+              <div class="big-emoji">📐</div>
+              <strong>Model-Based</strong>
+              <small>Learn a rule, function, or decision boundary</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Page sections">
+      <a href="#basis">Basis</a>
+      <a href="#human-analogy">Human Analogy</a>
+      <a href="#instance">Instance-Based</a>
+      <a href="#knn">KNN Example</a>
+      <a href="#model">Model-Based</a>
+      <a href="#boundary">Decision Boundary</a>
+      <a href="#differences">Differences</a>
+      <a href="#examples">Algorithms</a>
+      <a href="#summary">Summary</a>
+    </nav>
+
+    <section id="basis">
+      <div class="section-title">
+        <div class="icon">🎯</div>
+        <h2>1. What is the Basis of This Classification?</h2>
+      </div>
+      <div class="card">
+        <p>Earlier videos classified Machine Learning based on supervision and production behavior. This video classifies Machine Learning based on:</p>
+        <div class="note">How does the model learn from data?</div>
+        <div class="grid-2" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--pink); box-shadow:none;">
+            <div class="emoji-box">📚</div>
+            <h3>Instance-Based Learning</h3>
+            <p>The algorithm stores/memorizes the training examples and uses them later for prediction.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--teal); box-shadow:none;">
+            <div class="emoji-box">🧩</div>
+            <h3>Model-Based Learning</h3>
+            <p>The algorithm learns an underlying pattern, rule, function, or concept from the data.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="human-analogy">
+      <div class="section-title">
+        <div class="icon">👨‍🎓</div>
+        <h2>2. Human Learning Analogy</h2>
+      </div>
+      <div class="card">
+        <p>The teacher explains this using how students learn:</p>
+        <div class="grid-2" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--orange); box-shadow:none;">
+            <div class="emoji-box">📝</div>
+            <h3>Memorizing</h3>
+            <p>Sometimes students do not understand the concept, so they memorize answers for exams.</p>
+            <div class="note" style="border-left-color:var(--orange);">This is similar to Instance-Based Learning.</div>
+          </article>
+          <article class="card mini-card" style="--top: var(--green); box-shadow:none;">
+            <div class="emoji-box">💡</div>
+            <h3>Understanding</h3>
+            <p>Sometimes students understand the underlying concept and can solve new questions.</p>
+            <div class="note" style="border-left-color:var(--green);">This is similar to Model-Based Learning.</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="instance">
+      <div class="section-title">
+        <div class="icon">📌</div>
+        <h2>3. Instance-Based Learning</h2>
+      </div>
+      <div class="card">
+        <p><strong>Instance-Based Learning</strong> means the algorithm keeps the training data examples with itself.</p>
+        <p>When a new data point comes, it compares that new point with stored training points and predicts based on similarity.</p>
+
+        <div class="flow-4">
+          <div class="flow-box f-pink"><div><strong>Store Data</strong><span>Keep all examples</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-purple"><div><strong>New Query</strong><span>New student/data point</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-blue"><div><strong>Compare</strong><span>Find similar points</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-green"><div><strong>Predict</strong><span>Use nearby examples</span></div></div>
+        </div>
+
+        <div class="note">Important point: In Instance-Based Learning, there is no heavy “learning” during training. The real work happens when a new point comes.</div>
+      </div>
+    </section>
+
+    <section id="knn">
+      <div class="section-title">
+        <div class="icon">👥</div>
+        <h2>4. Student Placement Example Using KNN Logic</h2>
+      </div>
+      <div class="card">
+        <p>The video uses a student placement example:</p>
+        <ul class="list">
+          <li><span class="tick">✓</span><span><strong>Input 1:</strong> IQ</span></li>
+          <li><span class="tick">✓</span><span><strong>Input 2:</strong> CGPA</span></li>
+          <li><span class="tick">✓</span><span><strong>Output:</strong> Placement happened or not — Yes/No</span></li>
+        </ul>
+
+        <div class="data-points" aria-label="Stored points visual">
+          <div class="point yes">Y</div>
+          <div class="point no">N</div>
+          <div class="point yes">Y</div>
+          <div class="point yes">Y</div>
+          <div class="point no">N</div>
+          <div class="point new">?</div>
+          <div class="point yes">Y</div>
+          <div class="point no">N</div>
+          <div class="point no">N</div>
+          <div class="point yes">Y</div>
+          <div class="point yes">Y</div>
+          <div class="point no">N</div>
+          <div class="point yes">Y</div>
+          <div class="point no">N</div>
+        </div>
+
+        <div class="flow-4">
+          <div class="flow-box f-orange"><div><strong>New Student</strong><span>IQ + CGPA known</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-cyan"><div><strong>Calculate Distance</strong><span>Compare with all old points</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-purple"><div><strong>Pick Nearest</strong><span>Example: nearest 3 points</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-green"><div><strong>Majority Vote</strong><span>If most are Yes, predict Yes</span></div></div>
+        </div>
+
+        <div class="note">This is the basic idea of K-Nearest Neighbors: “Your nearby points tell something about you.”</div>
+      </div>
+    </section>
+
+    <section id="model">
+      <div class="section-title">
+        <div class="icon">📐</div>
+        <h2>5. Model-Based Learning</h2>
+      </div>
+      <div class="card">
+        <p><strong>Model-Based Learning</strong> means the algorithm tries to learn the underlying pattern or principle from the training data.</p>
+        <p>Instead of only storing examples, it creates a mathematical model/function that represents the relationship between input and output.</p>
+
+        <div class="flow-4">
+          <div class="flow-box f-teal"><div><strong>Training Data</strong><span>Input + output</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-blue"><div><strong>Learn Pattern</strong><span>Find relationship</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-purple"><div><strong>Create Model</strong><span>Function + parameters</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-green"><div><strong>Predict</strong><span>Use learned rule</span></div></div>
+        </div>
+
+        <div class="note">Model-Based Learning focuses on the rule behind the data, not just the individual training examples.</div>
+      </div>
+    </section>
+
+    <section id="boundary">
+      <div class="section-title">
+        <div class="icon">➗</div>
+        <h2>6. Decision Boundary Example</h2>
+      </div>
+      <div class="card">
+        <p>In the same placement example, a model-based algorithm may learn a <strong>decision boundary</strong>.</p>
+        <p>This boundary separates students likely to get placed from students likely not to get placed.</p>
+
+        <div class="boundary-box" aria-label="Decision boundary visual">
+          <div class="label-chip" style="left: 18px; top: 18px;">No Placement Side</div>
+          <div class="label-chip" style="right: 18px; bottom: 18px;">Placement Side</div>
+          <div class="boundary-line"></div>
+          <div class="b-point no" style="left:16%; top:58%;">N</div>
+          <div class="b-point no" style="left:22%; top:72%;">N</div>
+          <div class="b-point no" style="left:35%; top:62%;">N</div>
+          <div class="b-point yes" style="right:18%; top:24%;">Y</div>
+          <div class="b-point yes" style="right:31%; top:34%;">Y</div>
+          <div class="b-point yes" style="right:40%; top:18%;">Y</div>
+          <div class="b-point new" style="left:53%; top:42%; color:#1f2937;">?</div>
+        </div>
+
+        <div class="note">Once the decision boundary is learned, the model can classify a new point without checking every old training point.</div>
+      </div>
+    </section>
+
+    <section id="parameters">
+      <div class="section-title">
+        <div class="icon">⚙️</div>
+        <h2>7. What is a Model and What are Parameters?</h2>
+      </div>
+      <div class="card">
+        <p>In Model-Based Learning, the algorithm creates a model. A model is usually a rule/function that is controlled by learned values called <strong>parameters</strong>.</p>
+        <div class="grid-3" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--teal); box-shadow:none;">
+            <div class="emoji-box">📉</div>
+            <h3>Linear Regression</h3>
+            <p>Parameters can be slope and intercept.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--purple); box-shadow:none;">
+            <div class="emoji-box">🧠</div>
+            <h3>Neural Network</h3>
+            <p>Parameters can be weights and biases.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--blue); box-shadow:none;">
+            <div class="emoji-box">🌳</div>
+            <h3>Decision Tree</h3>
+            <p>The model learns rules/splits to separate classes.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="differences">
+      <div class="section-title">
+        <div class="icon">⚖️</div>
+        <h2>8. Important Differences</h2>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table aria-label="Instance based versus model based learning comparison">
+            <thead>
+              <tr>
+                <th>Point</th>
+                <th>Instance-Based Learning</th>
+                <th>Model-Based Learning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Main idea</td>
+                <td>Memorizes/stores training examples.</td>
+                <td>Learns a general rule/function from data.</td>
+              </tr>
+              <tr>
+                <td>Human analogy</td>
+                <td>Rote memorization.</td>
+                <td>Understanding the concept.</td>
+              </tr>
+              <tr>
+                <td>Training phase</td>
+                <td>Very little learning; mostly stores data.</td>
+                <td>Actual learning happens during training.</td>
+              </tr>
+              <tr>
+                <td>Prediction/scoring phase</td>
+                <td>Compares new point with stored training points.</td>
+                <td>Uses the learned model/rule directly.</td>
+              </tr>
+              <tr>
+                <td>What is stored?</td>
+                <td>Training instances/data points.</td>
+                <td>Model parameters, function, or decision boundary.</td>
+              </tr>
+              <tr>
+                <td>Need old training data after training?</td>
+                <td>Yes, usually needed for prediction.</td>
+                <td>No, usually the learned model is enough.</td>
+              </tr>
+              <tr>
+                <td>Generalization</td>
+                <td>Generalizes at prediction time using nearby examples.</td>
+                <td>Generalizes before prediction by learning a rule.</td>
+              </tr>
+              <tr>
+                <td>Storage</td>
+                <td>Can require high storage because data must be kept.</td>
+                <td>Usually lower storage because only model is stored.</td>
+              </tr>
+              <tr>
+                <td>Speed</td>
+                <td>Training is fast, prediction can be slower.</td>
+                <td>Training can be slower, prediction is usually faster.</td>
+              </tr>
+              <tr>
+                <td>Data preparation</td>
+                <td>Needed: outlier handling, encoding categorical data, scaling, etc.</td>
+                <td>Needed: outlier handling, encoding categorical data, scaling, etc.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">Common point: both approaches still need proper data preprocessing before they work well.</div>
+      </div>
+    </section>
+
+    <section id="examples">
+      <div class="section-title">
+        <div class="icon">🧪</div>
+        <h2>9. Examples of Algorithms</h2>
+      </div>
+      <div class="grid-2">
+        <article class="card mini-card" style="--top: var(--pink);">
+          <div class="emoji-box">📌</div>
+          <h3>Instance-Based Examples</h3>
+          <ul class="list">
+            <li><span class="tick">✓</span><span>K-Nearest Neighbors / KNN</span></li>
+            <li><span class="tick">✓</span><span>Some similarity-based methods</span></li>
+            <li><span class="tick">✓</span><span>Lazy learning style algorithms</span></li>
+          </ul>
+        </article>
+
+        <article class="card mini-card" style="--top: var(--teal);">
+          <div class="emoji-box">📐</div>
+          <h3>Model-Based Examples</h3>
+          <ul class="list">
+            <li><span class="tick">✓</span><span>Linear Regression</span></li>
+            <li><span class="tick">✓</span><span>Logistic Regression</span></li>
+            <li><span class="tick">✓</span><span>Decision Trees</span></li>
+            <li><span class="tick">✓</span><span>Many other algorithms that learn rules/parameters</span></li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="exam">
+      <div class="section-title">
+        <div class="icon">🧾</div>
+        <h2>10. Exam-Friendly Cheat Sheet</h2>
+      </div>
+      <div class="card">
+        <div class="flow">
+          <div class="flow-box f-pink"><div><strong>Instance-Based</strong><span>Store data</span></div></div>
+          <div class="arrow">≠</div>
+          <div class="flow-box f-teal"><div><strong>Model-Based</strong><span>Learn rule</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-purple"><div><strong>Goal</strong><span>Identify algorithm type</span></div></div>
+        </div>
+        <ul class="list">
+          <li><span class="tick">✓</span><span>If the algorithm compares a new point with stored old points, it is likely <strong>Instance-Based</strong>.</span></li>
+          <li><span class="tick">✓</span><span>If the algorithm learns a function, parameters, rule, or decision boundary, it is likely <strong>Model-Based</strong>.</span></li>
+          <li><span class="tick">✓</span><span>The goal of this video is to help you identify future algorithms as instance-based or model-based.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="summary">
+      <div class="card summary">
+        <h2>Final Super Simple Summary</h2>
+        <ul>
+          <li><strong>Instance-Based Learning:</strong> Remember training examples and compare new data with them.</li>
+          <li><strong>Model-Based Learning:</strong> Learn a general rule/function from data and use it for prediction.</li>
+          <li><strong>Instance-Based example:</strong> KNN predicts using nearest neighbors and majority vote.</li>
+          <li><strong>Model-Based example:</strong> A decision boundary separates placement and no-placement cases.</li>
+          <li><strong>Storage:</strong> Instance-based stores training data; model-based stores learned model/parameters.</li>
+          <li><strong>Training vs Prediction:</strong> Instance-based has light training but heavier prediction; model-based has heavier training but easier prediction.</li>
+          <li><strong>Memory trick:</strong> Instance-Based = memorize examples. Model-Based = understand the rule.</li>
+        </ul>
+      </div>
+    </section>
+
+    <p class="footer-note">Simplified from the video “Instance-Based Vs Model-Based Learning | Types of Machine Learning” by CampusX. These are original notes, not a word-for-word transcript.</p>
+  </main>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

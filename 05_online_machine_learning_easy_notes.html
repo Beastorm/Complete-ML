@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>05 - Online Machine Learning | Easy Notes</title>
+  <style>
+    :root {
+      --bg-1: #f0fdfa;
+      --bg-2: #eef2ff;
+      --ink: #172033;
+      --muted: #64748b;
+      --primary: #0f766e;
+      --primary-2: #14b8a6;
+      --blue: #4f46e5;
+      --cyan: #06b6d4;
+      --orange: #f59e0b;
+      --green: #22c55e;
+      --red: #ef4444;
+      --purple: #7c3aed;
+      --card: rgba(255, 255, 255, 0.88);
+      --border: rgba(15, 23, 42, 0.10);
+      --shadow: 0 22px 60px rgba(15, 23, 42, 0.12);
+      --radius: 26px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      line-height: 1.7;
+      background:
+        radial-gradient(circle at 10% 6%, rgba(20, 184, 166, 0.22), transparent 30%),
+        radial-gradient(circle at 92% 5%, rgba(79, 70, 229, 0.18), transparent 31%),
+        radial-gradient(circle at 88% 88%, rgba(245, 158, 11, 0.15), transparent 30%),
+        radial-gradient(circle at 12% 88%, rgba(6, 182, 212, 0.15), transparent 28%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    }
+
+    .page {
+      width: min(1140px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 64px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 36px;
+      padding: 56px 38px;
+      color: white;
+      background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 118, 110, 0.94)),
+        linear-gradient(45deg, #0f172a, #0f766e);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      right: -130px;
+      top: -130px;
+      background: rgba(45, 212, 191, 0.20);
+    }
+
+    .hero::after {
+      content: "05";
+      position: absolute;
+      right: -12px;
+      bottom: -78px;
+      font-size: 13rem;
+      line-height: 1;
+      font-weight: 1000;
+      letter-spacing: -0.10em;
+      color: rgba(255, 255, 255, 0.06);
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1.22fr 0.9fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      margin-bottom: 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      font-weight: 900;
+      backdrop-filter: blur(12px);
+    }
+
+    h1 {
+      font-size: clamp(2.15rem, 6.8vw, 5rem);
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+      margin-bottom: 18px;
+    }
+
+    .hero p {
+      max-width: 760px;
+      color: rgba(255, 255, 255, 0.90);
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    }
+
+    .hero-visual {
+      min-height: 320px;
+      border-radius: 32px;
+      padding: 22px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.11);
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      backdrop-filter: blur(14px);
+    }
+
+    .stream-card {
+      width: min(330px, 78vw);
+      display: grid;
+      gap: 12px;
+      animation: float 4.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .stream-row {
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.13);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .stream-icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      font-size: 1.5rem;
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .stream-row strong {
+      display: block;
+      line-height: 1.2;
+    }
+
+    .stream-row small {
+      color: rgba(255, 255, 255, 0.82);
+      font-weight: 700;
+    }
+
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 22px 0 0;
+    }
+
+    .toc a {
+      text-decoration: none;
+      color: #115e59;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .toc a:hover {
+      transform: translateY(-2px);
+      background: white;
+    }
+
+    section {
+      margin-top: 30px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid var(--border);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    h2 {
+      font-size: clamp(1.55rem, 3.3vw, 2.4rem);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    h3 {
+      font-size: 1.22rem;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin-bottom: 7px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .note {
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 20px;
+      border-left: 7px solid var(--primary-2);
+      background: linear-gradient(135deg, rgba(20, 184, 166, 0.10), rgba(79, 70, 229, 0.09));
+      color: #115e59;
+      font-size: 1.13rem;
+      font-weight: 900;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 12px;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+
+    .flow-box {
+      min-height: 122px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border-radius: 22px;
+      padding: 18px;
+      color: white;
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+      font-weight: 900;
+    }
+
+    .flow-box strong {
+      display: block;
+      font-size: 1.35rem;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .f-teal { background: linear-gradient(135deg, #2dd4bf, #0f766e); }
+    .f-blue { background: linear-gradient(135deg, #818cf8, #4f46e5); }
+    .f-cyan { background: linear-gradient(135deg, #22d3ee, #0891b2); }
+    .f-orange { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .f-green { background: linear-gradient(135deg, #4ade80, #16a34a); }
+    .f-red { background: linear-gradient(135deg, #fb7185, #e11d48); }
+    .f-purple { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+
+    .arrow {
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      font-size: 1.9rem;
+      font-weight: 1000;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .mini-card {
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .mini-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 26px 64px rgba(15, 23, 42, 0.15);
+    }
+
+    .mini-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 7px;
+      background: var(--top, var(--primary-2));
+    }
+
+    .emoji-box {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, rgba(20, 184, 166, 0.12), rgba(79, 70, 229, 0.12));
+      border: 1px solid var(--border);
+    }
+
+    .list {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 11px 12px;
+      border-radius: 15px;
+      background: rgba(248, 250, 252, 0.88);
+      border: 1px solid rgba(100, 116, 139, 0.12);
+    }
+
+    .tick {
+      color: #16a34a;
+      font-weight: 1000;
+    }
+
+    .warn {
+      color: var(--red);
+      font-weight: 1000;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 16px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+
+    th {
+      text-align: left;
+      padding: 10px 14px;
+      color: #115e59;
+      font-size: 0.92rem;
+    }
+
+    td {
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.84);
+      border-top: 1px solid rgba(100, 116, 139, 0.13);
+      border-bottom: 1px solid rgba(100, 116, 139, 0.13);
+      vertical-align: top;
+    }
+
+    td:first-child {
+      border-left: 1px solid rgba(100, 116, 139, 0.13);
+      border-radius: 16px 0 0 16px;
+      font-weight: 1000;
+      color: #115e59;
+    }
+
+    td:last-child {
+      border-right: 1px solid rgba(100, 116, 139, 0.13);
+      border-radius: 0 16px 16px 0;
+    }
+
+    .learning-rate {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .rate-card {
+      padding: 18px;
+      border-radius: 22px;
+      color: white;
+      min-height: 175px;
+      box-shadow: 0 18px 34px rgba(15, 23, 42, 0.13);
+    }
+
+    .rate-card .big {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .summary {
+      position: relative;
+      overflow: hidden;
+      color: white;
+      background: linear-gradient(135deg, #0f172a, #0f766e);
+      border: none;
+    }
+
+    .summary::after {
+      content: "ONLINE";
+      position: absolute;
+      right: -10px;
+      bottom: -44px;
+      font-size: 6.2rem;
+      font-weight: 1000;
+      letter-spacing: -0.08em;
+      color: rgba(255, 255, 255, 0.055);
+      line-height: 1;
+    }
+
+    .summary h2,
+    .summary ul {
+      position: relative;
+      z-index: 2;
+    }
+
+    .summary ul {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .summary li {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .flow,
+      .learning-rate {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 22px, 1140px);
+        padding-top: 12px;
+      }
+
+      .hero {
+        padding: 36px 22px;
+        border-radius: 28px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .summary::after {
+        font-size: 4.6rem;
+      }
+    }
+
+    @media print {
+      body { background: white; }
+      .toc { display: none; }
+      .hero,
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="badge">📘 05 • Easy ML Notes</div>
+          <h1>Online Machine Learning</h1>
+          <p>
+            Learn how a model can keep improving after deployment by training on new data in small steps,
+            instead of retraining from scratch every time.
+          </p>
+        </div>
+        <div class="hero-visual" aria-label="Online machine learning process visual">
+          <div class="stream-card">
+            <div class="stream-row">
+              <div class="stream-icon">📥</div>
+              <div><strong>New Data Arrives</strong><small>Clicks, messages, searches, purchases</small></div>
+            </div>
+            <div class="stream-row">
+              <div class="stream-icon">🤖</div>
+              <div><strong>Model Predicts</strong><small>Works live in production</small></div>
+            </div>
+            <div class="stream-row">
+              <div class="stream-icon">🔄</div>
+              <div><strong>Model Updates</strong><small>Learns incrementally</small></div>
+            </div>
+            <div class="stream-row">
+              <div class="stream-icon">📈</div>
+              <div><strong>Performance Improves</strong><small>Adapts to latest behavior</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Page sections">
+      <a href="#meaning">Meaning</a>
+      <a href="#flow">Process</a>
+      <a href="#examples">Examples</a>
+      <a href="#when">When to Use</a>
+      <a href="#implementation">Implementation</a>
+      <a href="#learning-rate">Learning Rate</a>
+      <a href="#risks">Risks</a>
+      <a href="#comparison">Online vs Offline</a>
+      <a href="#summary">Summary</a>
+    </nav>
+
+    <section id="meaning">
+      <div class="section-title">
+        <div class="icon">💡</div>
+        <h2>1. What is Online Machine Learning?</h2>
+      </div>
+      <div class="card">
+        <p><strong>Online Machine Learning</strong> means training a model incrementally as new data comes in.</p>
+        <p>Instead of training once on a full dataset, the model receives small batches or single data points one by one and keeps updating itself.</p>
+        <div class="note">Simple meaning: The model keeps learning while it is already live.</div>
+      </div>
+    </section>
+
+    <section id="flow">
+      <div class="section-title">
+        <div class="icon">🔄</div>
+        <h2>2. Basic Process Flow</h2>
+      </div>
+      <div class="card">
+        <p>Online Learning is useful when new data keeps coming continuously.</p>
+        <div class="flow">
+          <div class="flow-box f-teal"><div><strong>Initial Data</strong><span>Train first model</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-blue"><div><strong>Deploy</strong><span>Put model on server</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-green"><div><strong>Keep Learning</strong><span>Update with new data</span></div></div>
+        </div>
+        <div class="note">Batch Learning trains first and deploys later. Online Learning can train and improve even after deployment.</div>
+      </div>
+    </section>
+
+    <section id="examples">
+      <div class="section-title">
+        <div class="icon">🌟</div>
+        <h2>3. Easy Examples</h2>
+      </div>
+      <div class="grid-3">
+        <article class="card mini-card" style="--top: var(--primary-2);">
+          <div class="emoji-box">💬</div>
+          <h3>Chatbots</h3>
+          <p>Chatbots can improve as users ask more questions and give more feedback.</p>
+        </article>
+
+        <article class="card mini-card" style="--top: var(--blue);">
+          <div class="emoji-box">⌨️</div>
+          <h3>Keyboard Prediction</h3>
+          <p>A keyboard app can learn your typing style and suggest better next words over time.</p>
+        </article>
+
+        <article class="card mini-card" style="--top: var(--orange);">
+          <div class="emoji-box">▶️</div>
+          <h3>YouTube Recommendations</h3>
+          <p>When you watch or click a video, recommendations can quickly adapt to your latest interest.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="when">
+      <div class="section-title">
+        <div class="icon">🧭</div>
+        <h2>4. When Should We Use Online Learning?</h2>
+      </div>
+      <div class="grid-2">
+        <article class="card mini-card" style="--top: var(--green);">
+          <div class="emoji-box">🌊</div>
+          <h3>When Data Changes Fast</h3>
+          <p>Use it when the problem changes over time. This is often called <strong>concept drift</strong>.</p>
+          <ul class="list">
+            <li><span class="tick">✓</span><span>Changing customer behavior</span></li>
+            <li><span class="tick">✓</span><span>Changing trends on social media</span></li>
+            <li><span class="tick">✓</span><span>Recommendation systems</span></li>
+          </ul>
+        </article>
+
+        <article class="card mini-card" style="--top: var(--cyan);">
+          <div class="emoji-box">💰</div>
+          <h3>When Full Retraining is Costly</h3>
+          <p>Training a huge model again and again can be expensive. Online Learning updates the model in small steps.</p>
+          <ul class="list">
+            <li><span class="tick">✓</span><span>Less repeated full training</span></li>
+            <li><span class="tick">✓</span><span>Can be more cost-effective</span></li>
+            <li><span class="tick">✓</span><span>Useful for large-scale systems</span></li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="out-of-core">
+      <div class="section-title">
+        <div class="icon">🧱</div>
+        <h2>5. Useful for Very Large Datasets</h2>
+      </div>
+      <div class="card">
+        <p>Sometimes the dataset is too large to fit in memory at once.</p>
+        <p>In that case, we can split the data into small chunks and train the model chunk by chunk. This idea is called <strong>out-of-core learning</strong>.</p>
+        <div class="flow">
+          <div class="flow-box f-orange"><div><strong>Huge Data</strong><span>Too large for memory</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-cyan"><div><strong>Small Chunks</strong><span>Process one by one</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-purple"><div><strong>Incremental Training</strong><span>Model learns stepwise</span></div></div>
+        </div>
+        <div class="note">Important: Out-of-core learning may happen offline, but it uses the same incremental-learning idea.</div>
+      </div>
+    </section>
+
+    <section id="implementation">
+      <div class="section-title">
+        <div class="icon">🛠️</div>
+        <h2>6. How Can We Implement It?</h2>
+      </div>
+      <div class="grid-3">
+        <article class="card mini-card" style="--top: var(--blue);">
+          <div class="emoji-box">🐍</div>
+          <h3>Scikit-learn partial_fit</h3>
+          <p>Some algorithms support incremental training using methods like <strong>partial_fit</strong>.</p>
+          <p>Example: SGD-based models.</p>
+        </article>
+
+        <article class="card mini-card" style="--top: var(--primary-2);">
+          <div class="emoji-box">🌊</div>
+          <h3>River Library</h3>
+          <p>River is a Python library designed for online and streaming Machine Learning.</p>
+        </article>
+
+        <article class="card mini-card" style="--top: var(--purple);">
+          <div class="emoji-box">⚡</div>
+          <h3>Vowpal Wabbit</h3>
+          <p>A fast ML system that supports online learning and large-scale learning.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="learning-rate">
+      <div class="section-title">
+        <div class="icon">🎚️</div>
+        <h2>7. Learning Rate in Online Learning</h2>
+      </div>
+      <div class="card">
+        <p><strong>Learning rate</strong> decides how strongly the model changes after seeing new data.</p>
+        <div class="learning-rate">
+          <article class="rate-card f-red">
+            <div class="big">⚠️</div>
+            <h3>Too High</h3>
+            <p>The model changes too fast and may forget old useful patterns.</p>
+          </article>
+          <article class="rate-card f-blue">
+            <div class="big">🐢</div>
+            <h3>Too Low</h3>
+            <p>The model learns too slowly and may not adapt to new trends.</p>
+          </article>
+          <article class="rate-card f-green">
+            <div class="big">✅</div>
+            <h3>Balanced</h3>
+            <p>The model remembers old patterns and also learns new patterns.</p>
+          </article>
+        </div>
+        <div class="note">Choosing the correct learning rate is one of the most important parts of Online Learning.</div>
+      </div>
+    </section>
+
+    <section id="risks">
+      <div class="section-title">
+        <div class="icon">🚨</div>
+        <h2>8. Problems and Risks</h2>
+      </div>
+      <div class="grid-2">
+        <article class="card mini-card" style="--top: var(--red);">
+          <div class="emoji-box">🧪</div>
+          <h3>Hard to Manage in Production</h3>
+          <p>Building the model is not enough. Real-time systems need careful monitoring, reliable pipelines, and strong engineering.</p>
+          <ul class="list">
+            <li><span class="warn">!</span><span>Incoming data speed can be high.</span></li>
+            <li><span class="warn">!</span><span>Tools may be less mature than normal batch ML tools.</span></li>
+            <li><span class="warn">!</span><span>Production debugging can be difficult.</span></li>
+          </ul>
+        </article>
+
+        <article class="card mini-card" style="--top: var(--orange);">
+          <div class="emoji-box">🛡️</div>
+          <h3>Bad Data Can Damage the Model</h3>
+          <p>If wrong, biased, hacked, or unusual data starts entering the system, the model may learn wrong behavior.</p>
+          <ul class="list">
+            <li><span class="tick">✓</span><span>Use monitoring systems.</span></li>
+            <li><span class="tick">✓</span><span>Use anomaly detection.</span></li>
+            <li><span class="tick">✓</span><span>Keep rollback / fallback model ready.</span></li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="comparison">
+      <div class="section-title">
+        <div class="icon">⚖️</div>
+        <h2>9. Online Learning vs Offline/Batch Learning</h2>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table aria-label="Online learning versus offline batch learning comparison">
+            <thead>
+              <tr>
+                <th>Point</th>
+                <th>Offline / Batch Learning</th>
+                <th>Online Learning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Training style</td>
+                <td>Train on full dataset at once.</td>
+                <td>Train incrementally using small chunks or new data.</td>
+              </tr>
+              <tr>
+                <td>After deployment</td>
+                <td>Model usually only predicts. Retraining happens separately.</td>
+                <td>Model can keep learning while live.</td>
+              </tr>
+              <tr>
+                <td>Complexity</td>
+                <td>Simpler to build and manage.</td>
+                <td>More complex because monitoring and live updates are needed.</td>
+              </tr>
+              <tr>
+                <td>Best use case</td>
+                <td>Stable problems where patterns do not change quickly.</td>
+                <td>Changing problems where new data matters quickly.</td>
+              </tr>
+              <tr>
+                <td>Risk</td>
+                <td>Lower production risk.</td>
+                <td>Higher risk if bad data enters the system.</td>
+              </tr>
+              <tr>
+                <td>Example</td>
+                <td>Dog vs cat classifier trained once.</td>
+                <td>Recommendation system that adapts to user clicks.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="summary">
+      <div class="card summary">
+        <h2>Final Super Simple Summary</h2>
+        <ul>
+          <li><strong>Online Learning:</strong> Model learns incrementally from new data.</li>
+          <li><strong>Main idea:</strong> Train in small steps instead of retraining from scratch every time.</li>
+          <li><strong>Best for:</strong> changing data, recommendations, real-time systems, huge datasets.</li>
+          <li><strong>Important setting:</strong> learning rate decides how fast the model changes.</li>
+          <li><strong>Main risk:</strong> bad incoming data can spoil the model, so monitoring is necessary.</li>
+          <li><strong>Memory trick:</strong> Offline ML learns before going live; Online ML keeps learning after going live.</li>
+        </ul>
+      </div>
+    </section>
+
+    <p class="footer-note">Simplified from the video “Online Machine Learning | Online Learning | Online Vs Offline Machine Learning” by CampusX.</p>
+  </main>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

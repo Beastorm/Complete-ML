@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>100 Days of Machine Learning Notes — Index</title>
+  <style>
+    :root {
+      --bg-1: #eef2ff;
+      --bg-2: #ecfeff;
+      --ink: #172033;
+      --muted: #64748b;
+      --primary: #4f46e5;
+      --primary-dark: #312e81;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --orange: #f59e0b;
+      --pink: #ec4899;
+      --card: rgba(255, 255, 255, 0.88);
+      --border: rgba(15, 23, 42, 0.10);
+      --shadow: 0 22px 60px rgba(15, 23, 42, 0.12);
+      --radius: 26px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      line-height: 1.65;
+      background:
+        radial-gradient(circle at 10% 5%, rgba(79, 70, 229, 0.18), transparent 30%),
+        radial-gradient(circle at 90% 8%, rgba(6, 182, 212, 0.18), transparent 31%),
+        radial-gradient(circle at 85% 88%, rgba(245, 158, 11, 0.14), transparent 30%),
+        radial-gradient(circle at 12% 88%, rgba(236, 72, 153, 0.12), transparent 28%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    }
+
+    .page {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 64px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 36px;
+      padding: 56px 38px;
+      color: white;
+      background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(49, 46, 129, 0.95)),
+        linear-gradient(45deg, #0f172a, #312e81);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 380px;
+      height: 380px;
+      border-radius: 50%;
+      right: -130px;
+      top: -135px;
+      background: rgba(56, 189, 248, 0.20);
+    }
+
+    .hero::after {
+      content: "ML";
+      position: absolute;
+      right: -18px;
+      bottom: -78px;
+      font-size: 13rem;
+      line-height: 1;
+      font-weight: 1000;
+      letter-spacing: -0.12em;
+      color: rgba(255, 255, 255, 0.06);
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1.25fr 0.85fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      margin-bottom: 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      font-weight: 900;
+      backdrop-filter: blur(12px);
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 6.8vw, 5.1rem);
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+      margin-bottom: 18px;
+    }
+
+    .hero p {
+      max-width: 820px;
+      color: rgba(255, 255, 255, 0.90);
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    }
+
+    .hero-panel {
+      min-height: 300px;
+      border-radius: 32px;
+      padding: 22px;
+      display: grid;
+      align-content: center;
+      gap: 14px;
+      background: rgba(255, 255, 255, 0.11);
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      backdrop-filter: blur(14px);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.14);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .stat small {
+      display: block;
+      color: rgba(255, 255, 255, 0.80);
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .stat strong {
+      font-size: 1.75rem;
+      line-height: 1;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 12px;
+      align-items: center;
+      margin: 24px 0;
+    }
+
+    .search {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.86);
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+      font: inherit;
+      font-weight: 800;
+      outline: none;
+    }
+
+    .search:focus {
+      border-color: rgba(79, 70, 229, 0.5);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.12);
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 13px 16px;
+      background: rgba(255, 255, 255, 0.86);
+      color: var(--primary-dark);
+      font: inherit;
+      font-weight: 1000;
+      cursor: pointer;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+      transition: transform 0.18s ease, background 0.18s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      background: white;
+    }
+
+    .filter-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: -10px 0 24px;
+    }
+
+    .filter {
+      appearance: none;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.78);
+      color: var(--primary-dark);
+      font: inherit;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease;
+    }
+
+    .filter:hover {
+      transform: translateY(-2px);
+    }
+
+    .filter.active {
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--cyan));
+      border-color: rgba(79, 70, 229, 0.45);
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 28px 0 16px;
+    }
+
+    .section-heading h2 {
+      font-size: clamp(1.45rem, 3.2vw, 2.2rem);
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+    }
+
+    .count-pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      color: var(--primary-dark);
+      background: rgba(255, 255, 255, 0.76);
+      border: 1px solid var(--border);
+      font-weight: 1000;
+      white-space: nowrap;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .lesson-card {
+      position: relative;
+      overflow: hidden;
+      display: grid;
+      gap: 14px;
+      padding: 22px;
+      min-height: 250px;
+      border-radius: var(--radius);
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+
+    .lesson-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 28px 70px rgba(15, 23, 42, 0.16);
+    }
+
+    .lesson-card.hidden {
+      display: none;
+    }
+
+    .lesson-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 7px;
+      background: var(--accent, var(--primary));
+    }
+
+    .lesson-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 12px;
+    }
+
+    .lesson-no {
+      width: 50px;
+      height: 50px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      color: white;
+      background: var(--accent, var(--primary));
+      font-weight: 1000;
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.12);
+    }
+
+    .done-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-weight: 900;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+
+    .done-wrap input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--green);
+      cursor: pointer;
+    }
+
+    .lesson-card.done {
+      opacity: 0.82;
+    }
+
+    .lesson-card.done h3::after {
+      content: "  ✓";
+      color: var(--green);
+    }
+
+    .lesson-card h3 {
+      font-size: 1.22rem;
+      line-height: 1.25;
+      letter-spacing: -0.025em;
+    }
+
+    .lesson-card p {
+      color: var(--muted);
+      font-weight: 650;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .tag {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(248, 250, 252, 0.95);
+      border: 1px solid rgba(100, 116, 139, 0.12);
+      color: var(--primary-dark);
+      font-weight: 900;
+      font-size: 0.82rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .open-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--cyan));
+      border-radius: 16px;
+      padding: 11px 14px;
+      font-weight: 1000;
+      box-shadow: 0 14px 26px rgba(79, 70, 229, 0.18);
+    }
+
+    .file-name {
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 0.78rem;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .empty {
+      display: none;
+      padding: 24px;
+      border-radius: var(--radius);
+      background: rgba(255, 255, 255, 0.80);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      text-align: center;
+      color: var(--muted);
+      font-weight: 900;
+    }
+
+    .empty.show {
+      display: block;
+    }
+
+    .footer-note {
+      text-align: center;
+      color: var(--muted);
+      margin-top: 28px;
+      font-weight: 800;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 22px, 1180px);
+        padding-top: 12px;
+      }
+
+      .hero {
+        padding: 36px 22px;
+        border-radius: 28px;
+      }
+
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .lesson-card {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="badge">📚 100 Days of Machine Learning • Notes Index</div>
+          <h1>Machine Learning Notes Library</h1>
+          <p>
+            A clean index of all generated HTML notes. Search, filter by section, mark lessons as done,
+            and open any lesson directly.
+          </p>
+        </div>
+        <div class="hero-panel">
+          <div class="stat-grid">
+            <div class="stat"><small>Total HTML lessons</small><strong id="totalCount">20</strong></div>
+            <div class="stat"><small>Marked done</small><strong id="doneCount">0</strong></div>
+            <div class="stat"><small>Visible now</small><strong id="visibleCount">20</strong></div>
+            <div class="stat"><small>Progress</small><strong id="progressPct">0%</strong></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <input id="searchInput" class="search" type="search" placeholder="Search lessons, topics, tags, filenames..." />
+      <button class="btn" id="clearBtn">Clear Search</button>
+      <button class="btn" id="resetProgressBtn">Reset Progress</button>
+    </div>
+
+    <div class="filter-row" id="filters">
+      <button class="filter active" data-filter="all">All</button>
+      <button class="filter" data-filter="foundation">Foundation</button>
+      <button class="filter" data-filter="workflow">Workflow & Roles</button>
+      <button class="filter" data-filter="setup">Setup & Projects</button>
+      <button class="filter" data-filter="data">Data Gathering</button>
+      <button class="filter" data-filter="eda">EDA</button>
+      <button class="filter" data-filter="interactive">Has Interactions</button>
+    </div>
+
+    <div class="section-heading">
+      <h2>All HTML Notes</h2>
+      <div class="count-pill" id="countPill">20 lessons</div>
+    </div>
+
+    <div class="empty" id="emptyState">No lessons matched your search/filter.</div>
+    <section class="grid" id="lessonGrid" aria-label="Lesson index cards">
+      <!-- Cards inserted by JavaScript -->
+    </section>
+
+    <p class="footer-note">Tip: progress checkboxes are saved in this browser using localStorage.</p>
+  </main>
+
+  <script>
+    const lessons = [
+      {
+        no: '01',
+        title: 'What is Machine Learning?',
+        file: '01_what_is_machine_learning_easy_notes.html',
+        group: 'foundation',
+        desc: 'Introduction to ML, traditional programming vs ML, use cases, history, and job-market motivation.',
+        tags: ['ML basics', 'definition', 'spam', 'image classification']
+      },
+      {
+        no: '02',
+        title: 'AI vs ML vs DL',
+        file: '02_ai_vs_ml_vs_dl_easy_notes.html',
+        group: 'foundation',
+        desc: 'Relationship between Artificial Intelligence, Machine Learning, and Deep Learning with easy examples.',
+        tags: ['AI', 'ML', 'DL', 'neural networks']
+      },
+      {
+        no: '03',
+        title: 'Types of Machine Learning',
+        file: '03_types_of_machine_learning_easy_notes.html',
+        group: 'foundation',
+        desc: 'Supervised, unsupervised, semi-supervised, reinforcement learning, regression and classification.',
+        tags: ['supervised', 'unsupervised', 'RL', 'classification']
+      },
+      {
+        no: '04',
+        title: 'Batch Machine Learning',
+        file: '04_batch_machine_learning_easy_notes.html',
+        group: 'foundation',
+        desc: 'Offline/batch learning, production environment, retraining, and limitations of static models.',
+        tags: ['batch', 'offline', 'production', 'retraining']
+      },
+      {
+        no: '05',
+        title: 'Online Machine Learning',
+        file: '05_online_machine_learning_easy_notes.html',
+        group: 'foundation',
+        desc: 'Incremental learning, real-time data, learning rate, out-of-core learning, and risks.',
+        tags: ['online learning', 'incremental', 'learning rate']
+      },
+      {
+        no: '06',
+        title: 'Instance-Based vs Model-Based Learning',
+        file: '06_instance_based_vs_model_based_learning_easy_notes.html',
+        group: 'foundation',
+        desc: 'Memorizing examples vs learning a rule, KNN logic, decision boundary, and comparison table.',
+        tags: ['KNN', 'decision boundary', 'lazy learning']
+      },
+      {
+        no: '07',
+        title: 'Challenges in Machine Learning',
+        file: '07_challenges_in_machine_learning_easy_notes.html',
+        group: 'workflow',
+        desc: 'Data collection, labels, sampling bias, data quality, features, overfitting, underfitting, deployment, cost.',
+        tags: ['challenges', 'overfitting', 'MLOps', 'data quality']
+      },
+      {
+        no: '08',
+        title: 'Applications of Machine Learning',
+        file: '08_applications_of_machine_learning_easy_notes.html',
+        group: 'workflow',
+        desc: 'Retail, banking, transportation, manufacturing, social media, sentiment analysis, and B2B examples.',
+        tags: ['applications', 'retail', 'banking', 'sentiment']
+      },
+      {
+        no: '09',
+        title: 'Machine Learning Development Life Cycle',
+        file: '09_machine_learning_development_lifecycle_easy_notes.html',
+        group: 'workflow',
+        desc: 'End-to-end ML product lifecycle: framing, data, preprocessing, EDA, features, training, deployment, testing.',
+        tags: ['MLDLC', 'deployment', 'EDA', 'feature engineering']
+      },
+      {
+        no: '10',
+        title: 'Data Science Job Roles',
+        file: '10_data_roles_in_data_science_easy_notes.html',
+        group: 'workflow',
+        desc: 'Data Engineer vs Data Analyst vs Data Scientist vs ML Engineer, responsibilities and skills.',
+        tags: ['career', 'roles', 'data engineer', 'ML engineer']
+      },
+      {
+        no: '11',
+        title: 'What are Tensors?',
+        file: '11_what_are_tensors_easy_notes.html',
+        group: 'foundation',
+        desc: 'Tensor basics: scalar, vector, matrix, rank, axes, shape, size, and 1D to 5D examples.',
+        tags: ['tensors', 'shape', 'rank', 'interactive'],
+        interactive: true
+      },
+      {
+        no: '12',
+        title: 'Installing Anaconda, Jupyter, Kaggle & Colab',
+        file: '12_installing_anaconda_jupyter_colab_easy_notes.html',
+        group: 'setup',
+        desc: 'Anaconda setup, Jupyter Notebook, virtual environments, Kaggle notebooks, Colab GPU, Kaggle API.',
+        tags: ['anaconda', 'jupyter', 'colab', 'kaggle', 'interactive'],
+        interactive: true
+      },
+      {
+        no: '13',
+        title: 'End-to-End Toy ML Project',
+        file: '13_end_to_end_toy_project_easy_notes.html',
+        group: 'setup',
+        desc: 'Placement prediction project using preprocessing, EDA, train-test split, scaling, Logistic Regression, pickle.',
+        tags: ['toy project', 'logistic regression', 'accuracy', 'interactive'],
+        interactive: true
+      },
+      {
+        no: '14',
+        title: 'How to Frame a Machine Learning Problem',
+        file: '14_framing_machine_learning_problem_easy_notes.html',
+        group: 'workflow',
+        desc: 'Netflix churn case study: convert business goal into ML problem, data, metrics, online vs batch, assumptions.',
+        tags: ['problem framing', 'churn', 'metrics', 'interactive'],
+        interactive: true
+      },
+      {
+        no: '15',
+        title: 'Working with CSV Files',
+        file: '15_working_with_csv_files_easy_notes.html',
+        group: 'data',
+        desc: 'pd.read_csv parameters: sep, names, header, usecols, nrows, encoding, bad lines, dtype, dates, chunksize.',
+        tags: ['CSV', 'pandas', 'read_csv', 'interactive'],
+        interactive: true
+      },
+      {
+        no: '16',
+        title: 'Working with JSON and SQL',
+        file: '16_working_with_json_sql_easy_notes.html',
+        group: 'data',
+        desc: 'JSON, SQL, XAMPP, MySQL connector, read_json, read_sql_query, filtering SQL tables into DataFrames.',
+        tags: ['JSON', 'SQL', 'MySQL', 'pandas', 'interactive'],
+        interactive: true
+      },
+      {
+        no: '17',
+        title: 'Fetching Data From an API',
+        file: '17_fetching_data_from_api_easy_notes.html',
+        group: 'data',
+        desc: 'API concept, TMDB API, requests, JSON parsing, pagination loop, CSV export, and Kaggle upload.',
+        tags: ['API', 'requests', 'TMDB', 'pagination', 'interactive'],
+        interactive: true
+      },
+      {
+        no: '18',
+        title: 'Fetching Data Using Web Scraping',
+        file: '18_fetching_data_using_web_scraping_easy_notes.html',
+        group: 'data',
+        desc: 'Web scraping with requests, User-Agent headers, BeautifulSoup, Inspect Element, containers, pagination.',
+        tags: ['web scraping', 'BeautifulSoup', 'HTML', 'interactive'],
+        interactive: true
+      },
+      {
+        no: '19',
+        title: 'Understanding Your Data',
+        file: '19_understanding_your_data_easy_notes.html',
+        group: 'eda',
+        desc: 'First dataset questions: shape, head/sample, info, missing values, describe, duplicates, correlation.',
+        tags: ['EDA', 'shape', 'missing values', 'correlation', 'interactive'],
+        interactive: true
+      },
+      {
+        no: '20',
+        title: 'EDA Using Univariate Analysis',
+        file: '20_eda_univariate_analysis_easy_notes.html',
+        group: 'eda',
+        desc: 'Univariate analysis for categorical and numerical columns: countplot, pie, histogram, distplot, boxplot, skewness.',
+        tags: ['univariate', 'countplot', 'histogram', 'boxplot', 'interactive'],
+        interactive: true
+      }
+    ];
+
+    const accents = {
+      foundation: 'linear-gradient(135deg, #4f46e5, #06b6d4)',
+      workflow: 'linear-gradient(135deg, #7c3aed, #ec4899)',
+      setup: 'linear-gradient(135deg, #0f766e, #22c55e)',
+      data: 'linear-gradient(135deg, #2563eb, #f59e0b)',
+      eda: 'linear-gradient(135deg, #f97316, #ef4444)'
+    };
+
+    const groupLabels = {
+      foundation: 'Foundation',
+      workflow: 'Workflow & Roles',
+      setup: 'Setup & Projects',
+      data: 'Data Gathering',
+      eda: 'EDA'
+    };
+
+    let activeFilter = 'all';
+
+    function getDoneSet() {
+      try {
+        return new Set(JSON.parse(localStorage.getItem('mlNotesDone') || '[]'));
+      } catch {
+        return new Set();
+      }
+    }
+
+    function saveDoneSet(doneSet) {
+      localStorage.setItem('mlNotesDone', JSON.stringify([...doneSet]));
+    }
+
+    function renderCards() {
+      const grid = document.getElementById('lessonGrid');
+      const doneSet = getDoneSet();
+      grid.innerHTML = lessons.map(lesson => {
+        const tags = lesson.tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+        const done = doneSet.has(lesson.no);
+        return `
+          <article class="lesson-card ${done ? 'done' : ''}" style="--accent:${accents[lesson.group]}" data-no="${lesson.no}" data-group="${lesson.group}" data-interactive="${lesson.interactive ? 'true' : 'false'}" data-search="${(lesson.no + ' ' + lesson.title + ' ' + lesson.desc + ' ' + lesson.tags.join(' ') + ' ' + lesson.file).toLowerCase()}">
+            <div class="lesson-top">
+              <div class="lesson-no">${lesson.no}</div>
+              <label class="done-wrap"><input type="checkbox" ${done ? 'checked' : ''} data-done="${lesson.no}" /> Done</label>
+            </div>
+            <div>
+              <h3>${lesson.title}</h3>
+              <p>${lesson.desc}</p>
+            </div>
+            <div class="tags">${tags}<span class="tag">${groupLabels[lesson.group]}</span></div>
+            <div class="actions">
+              <a class="open-link" href="${lesson.file}">Open lesson →</a>
+            </div>
+            <div class="file-name">${lesson.file}</div>
+          </article>
+        `;
+      }).join('');
+
+      grid.querySelectorAll('[data-done]').forEach(input => {
+        input.addEventListener('change', event => {
+          const set = getDoneSet();
+          const no = event.target.dataset.done;
+          if (event.target.checked) set.add(no); else set.delete(no);
+          saveDoneSet(set);
+          const card = event.target.closest('.lesson-card');
+          card.classList.toggle('done', event.target.checked);
+          updateCounts();
+        });
+      });
+
+      applyFilters();
+      updateCounts();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      let visible = 0;
+
+      document.querySelectorAll('.lesson-card').forEach(card => {
+        const matchesSearch = !query || card.dataset.search.includes(query);
+        const matchesGroup = activeFilter === 'all' || card.dataset.group === activeFilter || (activeFilter === 'interactive' && card.dataset.interactive === 'true');
+        const show = matchesSearch && matchesGroup;
+        card.classList.toggle('hidden', !show);
+        if (show) visible++;
+      });
+
+      document.getElementById('visibleCount').textContent = visible;
+      document.getElementById('countPill').textContent = `${visible} lesson${visible === 1 ? '' : 's'}`;
+      document.getElementById('emptyState').classList.toggle('show', visible === 0);
+    }
+
+    function updateCounts() {
+      const done = getDoneSet().size;
+      const total = lessons.length;
+      const pct = Math.round((done / total) * 100);
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('doneCount').textContent = done;
+      document.getElementById('progressPct').textContent = `${pct}%`;
+      applyFilters();
+    }
+
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('clearBtn').addEventListener('click', () => {
+      document.getElementById('searchInput').value = '';
+      applyFilters();
+    });
+
+    document.getElementById('resetProgressBtn').addEventListener('click', () => {
+      if (confirm('Reset all progress checkboxes?')) {
+        localStorage.removeItem('mlNotesDone');
+        renderCards();
+      }
+    });
+
+    document.querySelectorAll('.filter').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.filter').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        activeFilter = button.dataset.filter;
+        applyFilters();
+      });
+    });
+
+    renderCards();
+  </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

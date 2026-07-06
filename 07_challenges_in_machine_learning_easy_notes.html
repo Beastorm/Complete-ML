@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>07 - Challenges in Machine Learning | Easy Notes</title>
+  <style>
+    :root {
+      --bg-1: #fff1f2;
+      --bg-2: #eef2ff;
+      --ink: #172033;
+      --muted: #64748b;
+      --primary: #e11d48;
+      --primary-2: #fb7185;
+      --blue: #4f46e5;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --orange: #f59e0b;
+      --purple: #7c3aed;
+      --teal: #14b8a6;
+      --red: #ef4444;
+      --card: rgba(255, 255, 255, 0.88);
+      --border: rgba(15, 23, 42, 0.10);
+      --shadow: 0 22px 60px rgba(15, 23, 42, 0.12);
+      --radius: 26px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      line-height: 1.7;
+      background:
+        radial-gradient(circle at 10% 7%, rgba(225, 29, 72, 0.18), transparent 30%),
+        radial-gradient(circle at 92% 6%, rgba(79, 70, 229, 0.16), transparent 31%),
+        radial-gradient(circle at 88% 88%, rgba(6, 182, 212, 0.15), transparent 30%),
+        radial-gradient(circle at 12% 88%, rgba(245, 158, 11, 0.14), transparent 28%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    }
+
+    .page {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 64px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 36px;
+      padding: 56px 38px;
+      color: white;
+      background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(136, 19, 55, 0.94)),
+        linear-gradient(45deg, #0f172a, #881337);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 370px;
+      height: 370px;
+      border-radius: 50%;
+      right: -130px;
+      top: -130px;
+      background: rgba(251, 113, 133, 0.22);
+    }
+
+    .hero::after {
+      content: "07";
+      position: absolute;
+      right: -12px;
+      bottom: -78px;
+      font-size: 13rem;
+      line-height: 1;
+      font-weight: 1000;
+      letter-spacing: -0.10em;
+      color: rgba(255, 255, 255, 0.06);
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1.25fr 0.88fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      margin-bottom: 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      font-weight: 900;
+      backdrop-filter: blur(12px);
+    }
+
+    h1 {
+      font-size: clamp(2.15rem, 6.8vw, 5rem);
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+      margin-bottom: 18px;
+    }
+
+    .hero p {
+      max-width: 800px;
+      color: rgba(255, 255, 255, 0.90);
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    }
+
+    .hero-visual {
+      min-height: 330px;
+      border-radius: 32px;
+      padding: 22px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.11);
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      backdrop-filter: blur(14px);
+    }
+
+    .challenge-wheel {
+      width: min(340px, 80vw);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      animation: float 4.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .wheel-card {
+      min-height: 130px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 14px;
+      border-radius: 24px;
+      color: white;
+      font-weight: 1000;
+      border: 1px solid rgba(255,255,255,0.22);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), 0 16px 30px rgba(15,23,42,0.16);
+    }
+
+    .wheel-card small {
+      display: block;
+      color: rgba(255,255,255,0.88);
+      font-weight: 800;
+      line-height: 1.3;
+      margin-top: 4px;
+    }
+
+    .w1 { background: linear-gradient(135deg, #fb7185, #e11d48); }
+    .w2 { background: linear-gradient(135deg, #818cf8, #4f46e5); }
+    .w3 { background: linear-gradient(135deg, #22d3ee, #0891b2); }
+    .w4 { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 22px 0 0;
+    }
+
+    .toc a {
+      text-decoration: none;
+      color: #881337;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .toc a:hover {
+      transform: translateY(-2px);
+      background: white;
+    }
+
+    section {
+      margin-top: 30px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid var(--border);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    h2 {
+      font-size: clamp(1.55rem, 3.3vw, 2.4rem);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    h3 {
+      font-size: 1.22rem;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin-bottom: 7px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .note {
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 20px;
+      border-left: 7px solid var(--primary-2);
+      background: linear-gradient(135deg, rgba(225, 29, 72, 0.10), rgba(79, 70, 229, 0.08));
+      color: #881337;
+      font-size: 1.13rem;
+      font-weight: 900;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .mini-card {
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .mini-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 26px 64px rgba(15, 23, 42, 0.15);
+    }
+
+    .mini-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 7px;
+      background: var(--top, var(--primary-2));
+    }
+
+    .emoji-box {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, rgba(225, 29, 72, 0.12), rgba(79, 70, 229, 0.12));
+      border: 1px solid var(--border);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 12px;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+
+    .flow-4 {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+      gap: 12px;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+
+    .flow-box {
+      min-height: 122px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border-radius: 22px;
+      padding: 18px;
+      color: white;
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+      font-weight: 900;
+    }
+
+    .flow-box strong {
+      display: block;
+      font-size: 1.2rem;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .f-red { background: linear-gradient(135deg, #fb7185, #e11d48); }
+    .f-blue { background: linear-gradient(135deg, #818cf8, #4f46e5); }
+    .f-cyan { background: linear-gradient(135deg, #22d3ee, #0891b2); }
+    .f-orange { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .f-green { background: linear-gradient(135deg, #4ade80, #16a34a); }
+    .f-purple { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+    .f-teal { background: linear-gradient(135deg, #2dd4bf, #0f766e); }
+
+    .arrow {
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      font-size: 1.9rem;
+      font-weight: 1000;
+    }
+
+    .list {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 11px 12px;
+      border-radius: 15px;
+      background: rgba(248, 250, 252, 0.88);
+      border: 1px solid rgba(100, 116, 139, 0.12);
+    }
+
+    .tick {
+      color: #16a34a;
+      font-weight: 1000;
+    }
+
+    .warn {
+      color: var(--red);
+      font-weight: 1000;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 16px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 820px;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+
+    th {
+      text-align: left;
+      padding: 10px 14px;
+      color: #881337;
+      font-size: 0.92rem;
+    }
+
+    td {
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.84);
+      border-top: 1px solid rgba(100, 116, 139, 0.13);
+      border-bottom: 1px solid rgba(100, 116, 139, 0.13);
+      vertical-align: top;
+    }
+
+    td:first-child {
+      border-left: 1px solid rgba(100, 116, 139, 0.13);
+      border-radius: 16px 0 0 16px;
+      font-weight: 1000;
+      color: #881337;
+    }
+
+    td:last-child {
+      border-right: 1px solid rgba(100, 116, 139, 0.13);
+      border-radius: 0 16px 16px 0;
+    }
+
+    .challenge-number {
+      display: inline-grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      background: var(--primary);
+      color: white;
+      font-weight: 1000;
+      margin-right: 10px;
+      box-shadow: 0 12px 20px rgba(225, 29, 72, 0.18);
+    }
+
+    .curve-box {
+      min-height: 260px;
+      margin-top: 18px;
+      border-radius: 24px;
+      border: 1px solid rgba(100, 116, 139, 0.14);
+      background:
+        linear-gradient(90deg, rgba(100,116,139,0.08) 1px, transparent 1px),
+        linear-gradient(rgba(100,116,139,0.08) 1px, transparent 1px),
+        rgba(255,255,255,0.74);
+      background-size: 34px 34px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dot {
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--blue);
+      box-shadow: 0 8px 16px rgba(15,23,42,0.16);
+    }
+
+    .line-good,
+    .line-bad,
+    .line-under {
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      height: 6px;
+      border-radius: 999px;
+      transform-origin: center;
+    }
+
+    .line-good {
+      top: 52%;
+      background: var(--green);
+      transform: rotate(-18deg);
+    }
+
+    .line-bad {
+      top: 48%;
+      background: var(--red);
+      transform: rotate(8deg);
+      box-shadow:
+        0 -24px 0 -1px rgba(239,68,68,0.45),
+        0 25px 0 -1px rgba(239,68,68,0.35);
+    }
+
+    .line-under {
+      top: 50%;
+      background: var(--orange);
+      transform: rotate(0deg);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .chip {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid rgba(100, 116, 139, 0.16);
+      font-weight: 900;
+      color: #881337;
+      box-shadow: 0 10px 18px rgba(15, 23, 42, 0.05);
+    }
+
+    .summary {
+      position: relative;
+      overflow: hidden;
+      color: white;
+      background: linear-gradient(135deg, #0f172a, #881337);
+      border: none;
+    }
+
+    .summary::after {
+      content: "10";
+      position: absolute;
+      right: 18px;
+      bottom: -88px;
+      font-size: 14rem;
+      font-weight: 1000;
+      color: rgba(255, 255, 255, 0.055);
+      line-height: 1;
+    }
+
+    .summary h2,
+    .summary ul {
+      position: relative;
+      z-index: 2;
+    }
+
+    .summary ul {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .summary li {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .flow,
+      .flow-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+
+      .challenge-wheel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 22px, 1160px);
+        padding-top: 12px;
+      }
+
+      .hero {
+        padding: 36px 22px;
+        border-radius: 28px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+    }
+
+    @media print {
+      body { background: white; }
+      .toc { display: none; }
+      .hero,
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="badge">📘 07 • Easy ML Notes</div>
+          <h1>Challenges in Machine Learning</h1>
+          <p>
+            This video lists the important real-world problems you will face while building ML projects:
+            from collecting data to cleaning it, avoiding overfitting, integrating software, deployment, and cost.
+          </p>
+        </div>
+        <div class="hero-visual" aria-label="Machine learning challenge categories visual">
+          <div class="challenge-wheel">
+            <div class="wheel-card w1">Data Problems<small>collection, labels, quality, representation</small></div>
+            <div class="wheel-card w2">Model Problems<small>features, overfitting, underfitting</small></div>
+            <div class="wheel-card w3">Production Problems<small>integration, deployment, monitoring</small></div>
+            <div class="wheel-card w4">Business Problems<small>cost, scale, MLOps</small></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Page sections">
+      <a href="#intro">Intro</a>
+      <a href="#data-collection">1 Data Collection</a>
+      <a href="#insufficient-data">2 Data & Labels</a>
+      <a href="#representative-data">3 Representation</a>
+      <a href="#quality">4 Quality</a>
+      <a href="#features">5 Features</a>
+      <a href="#overfitting">6 Overfitting</a>
+      <a href="#underfitting">7 Underfitting</a>
+      <a href="#integration">8 Integration</a>
+      <a href="#deployment">9 Deployment</a>
+      <a href="#cost">10 Cost</a>
+      <a href="#summary">Summary</a>
+    </nav>
+
+    <section id="intro">
+      <div class="section-title">
+        <div class="icon">🎯</div>
+        <h2>Before Coding: Know the Real Challenges</h2>
+      </div>
+      <div class="card">
+        <p>The teacher says that before moving into coding and building ML models, it is important to understand the practical challenges of Machine Learning.</p>
+        <p>Most ML problems come from two broad areas:</p>
+        <div class="grid-2" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--primary); box-shadow:none;">
+            <div class="emoji-box">📊</div>
+            <h3>Data-related challenges</h3>
+            <p>Collection, insufficient data, labels, representation, quality, and useful features.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--blue); box-shadow:none;">
+            <div class="emoji-box">🤖</div>
+            <h3>Model / production challenges</h3>
+            <p>Overfitting, underfitting, software integration, deployment, monitoring, and cost.</p>
+          </article>
+        </div>
+        <div class="note">Main message: Making an ML model is not enough. You must also make it useful, reliable, deployable, and affordable.</div>
+      </div>
+    </section>
+
+    <section id="data-collection">
+      <div class="section-title">
+        <div class="icon">📥</div>
+        <h2><span class="challenge-number">1</span>Data Collection</h2>
+      </div>
+      <div class="card">
+        <p>Machine Learning is all about learning from data. If you do not have data, there is no point in doing ML.</p>
+        <p>In courses and college projects, data is usually easy to get. You may download CSV files from Kaggle or receive datasets from teachers. But in real company projects, data gathering is often difficult.</p>
+
+        <div class="flow">
+          <div class="flow-box f-red"><div><strong>Need Data</strong><span>No data = no ML</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-blue"><div><strong>Collect Data</strong><span>Internal systems / APIs / scraping</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-green"><div><strong>Use Data</strong><span>Train ML model</span></div></div>
+        </div>
+
+        <ul class="list">
+          <li><span class="tick">✓</span><span>Data may come from an organization’s internal databases.</span></li>
+          <li><span class="tick">✓</span><span>Sometimes you may use web scraping or APIs to collect data.</span></li>
+          <li><span class="warn">!</span><span>Collecting data through code can create many technical and legal/practical issues.</span></li>
+          <li><span class="warn">!</span><span>If ready-made data is not available, gathering data itself becomes a major project.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="insufficient-data">
+      <div class="section-title">
+        <div class="icon">🏷️</div>
+        <h2><span class="challenge-number">2</span>Insufficient Data and Labeled Data</h2>
+      </div>
+      <div class="card">
+        <p>Even after collecting data, you may not have enough of it. ML models usually need a good amount of data to perform well.</p>
+        <p>The video explains that sometimes a weaker algorithm with more data can outperform a stronger algorithm with less data.</p>
+
+        <div class="grid-2" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--orange); box-shadow:none;">
+            <div class="emoji-box">📉</div>
+            <h3>Less Data</h3>
+            <p>Even a good algorithm may perform poorly if the training data is too small.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--green); box-shadow:none;">
+            <div class="emoji-box">📈</div>
+            <h3>More Data</h3>
+            <p>A simpler algorithm can perform better if it receives much more useful data.</p>
+          </article>
+        </div>
+
+        <div class="note">Key idea: Data can be extremely powerful. This is often called the “unreasonable effectiveness of data.”</div>
+
+        <h3 style="margin-top:20px;">Labeled data is another problem</h3>
+        <p>For supervised learning, the data also needs labels. For example, if you are building an image classifier, collecting images is not enough. Someone must label each image as cat, dog, car, etc.</p>
+        <ul class="list">
+          <li><span class="warn">!</span><span>Labeling needs human effort.</span></li>
+          <li><span class="warn">!</span><span>Labeling can be expensive and time-consuming.</span></li>
+          <li><span class="warn">!</span><span>Without labels, many supervised ML tasks cannot be trained properly.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="representative-data">
+      <div class="section-title">
+        <div class="icon">🌍</div>
+        <h2><span class="challenge-number">3</span>Non-Representative Data</h2>
+      </div>
+      <div class="card">
+        <p>Your data should represent the real problem. If your sample is biased or incomplete, the model will learn the wrong pattern.</p>
+
+        <div class="grid-2" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--red); box-shadow:none;">
+            <div class="emoji-box">📌</div>
+            <h3>Sampling Noise</h3>
+            <p>When the sample is too small or incomplete, it may tell only half the story.</p>
+            <p>Example: fitting a line using only a small part of the full data can produce the wrong model.</p>
+          </article>
+
+          <article class="card mini-card" style="--top: var(--purple); box-shadow:none;">
+            <div class="emoji-box">⚖️</div>
+            <h3>Sampling Bias</h3>
+            <p>Even a large sample can be biased if the data is collected from the wrong group.</p>
+            <p>Example: asking only Indian fans who will win the cricket World Cup may give a biased answer.</p>
+          </article>
+        </div>
+
+        <div class="note">If the data does not represent the real world properly, the model’s predictions will also be unreliable.</div>
+
+        <div class="flow-4">
+          <div class="flow-box f-red"><div><strong>Wrong Sample</strong><span>Biased or incomplete</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-orange"><div><strong>Wrong Pattern</strong><span>Model learns badly</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-purple"><div><strong>Wrong Prediction</strong><span>Poor decisions</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-green"><div><strong>Fix</strong><span>Collect balanced data</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="quality">
+      <div class="section-title">
+        <div class="icon">🧹</div>
+        <h2><span class="challenge-number">4</span>Poor Quality Data</h2>
+      </div>
+      <div class="card">
+        <p>Data often contains many quality problems. If the input data is bad, the ML model cannot magically fix everything.</p>
+
+        <div class="grid-4" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--red); box-shadow:none;">
+            <div class="emoji-box">🔊</div>
+            <h3>Noise</h3>
+            <p>Random unwanted errors in the data.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--orange); box-shadow:none;">
+            <div class="emoji-box">❓</div>
+            <h3>Missing Values</h3>
+            <p>Important values may be empty or unavailable.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--purple); box-shadow:none;">
+            <div class="emoji-box">🚨</div>
+            <h3>Outliers</h3>
+            <p>Extreme values can disturb the model.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--cyan); box-shadow:none;">
+            <div class="emoji-box">🧾</div>
+            <h3>Wrong Format</h3>
+            <p>Different formats make processing difficult.</p>
+          </article>
+        </div>
+
+        <div class="note">A common saying in ML: Garbage in, garbage out. Bad data usually creates bad results.</div>
+
+        <p style="margin-top:16px;">The video mentions that in real ML projects, a large part of the time can go into cleaning and improving data quality. Data cleaning is one of the most important skills for a data scientist or ML engineer.</p>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="section-title">
+        <div class="icon">🧩</div>
+        <h2><span class="challenge-number">5</span>Irrelevant Features and Feature Engineering</h2>
+      </div>
+      <div class="card">
+        <p><strong>Features</strong> are the input columns used by the model. If you give useless or irrelevant features, the model may perform badly.</p>
+
+        <div class="grid-2" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--red); box-shadow:none;">
+            <div class="emoji-box">🗑️</div>
+            <h3>Irrelevant Features</h3>
+            <p>Columns that do not help prediction should often be removed.</p>
+            <p>Example: for predicting marathon participation, location may not directly explain fitness.</p>
+          </article>
+
+          <article class="card mini-card" style="--top: var(--green); box-shadow:none;">
+            <div class="emoji-box">🛠️</div>
+            <h3>Feature Engineering</h3>
+            <p>Sometimes we combine existing columns to create a better feature.</p>
+            <p>Example: height + weight can be used to create BMI.</p>
+          </article>
+        </div>
+
+        <div class="note">Choosing which columns to keep, remove, or combine is a major challenge and improves with experience.</div>
+      </div>
+    </section>
+
+    <section id="overfitting">
+      <div class="section-title">
+        <div class="icon">🎯</div>
+        <h2><span class="challenge-number">6</span>Overfitting</h2>
+      </div>
+      <div class="card">
+        <p><strong>Overfitting</strong> happens when the model memorizes the training data too closely instead of understanding the real pattern.</p>
+        <p>It performs very well on training data but badly on new unseen data.</p>
+
+        <div class="curve-box" aria-label="Overfitting visual">
+          <div class="dot" style="left:12%; top:70%;"></div>
+          <div class="dot" style="left:24%; top:55%;"></div>
+          <div class="dot" style="left:34%; top:62%;"></div>
+          <div class="dot" style="left:48%; top:43%;"></div>
+          <div class="dot" style="left:60%; top:36%;"></div>
+          <div class="dot" style="left:74%; top:26%;"></div>
+          <div class="dot" style="left:84%; top:18%;"></div>
+          <div class="line-bad"></div>
+        </div>
+
+        <div class="note">Easy analogy: Watching one expensive movie in Gurgaon and concluding “everything in Gurgaon is expensive” is overgeneralizing from limited data.</div>
+        <ul class="list">
+          <li><span class="warn">!</span><span>The model becomes too attached to training points.</span></li>
+          <li><span class="warn">!</span><span>It may create a complicated curve that touches almost every training point.</span></li>
+          <li><span class="warn">!</span><span>It fails to generalize on new data.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="underfitting">
+      <div class="section-title">
+        <div class="icon">📉</div>
+        <h2><span class="challenge-number">7</span>Underfitting</h2>
+      </div>
+      <div class="card">
+        <p><strong>Underfitting</strong> is the opposite of overfitting. It happens when the model is too simple and cannot capture the actual pattern in the data.</p>
+
+        <div class="curve-box" aria-label="Underfitting visual">
+          <div class="dot" style="left:12%; top:70%; background:var(--teal);"></div>
+          <div class="dot" style="left:24%; top:55%; background:var(--teal);"></div>
+          <div class="dot" style="left:34%; top:62%; background:var(--teal);"></div>
+          <div class="dot" style="left:48%; top:43%; background:var(--teal);"></div>
+          <div class="dot" style="left:60%; top:36%; background:var(--teal);"></div>
+          <div class="dot" style="left:74%; top:26%; background:var(--teal);"></div>
+          <div class="dot" style="left:84%; top:18%; background:var(--teal);"></div>
+          <div class="line-under"></div>
+        </div>
+
+        <ul class="list">
+          <li><span class="warn">!</span><span>The model does not perform well even on training data.</span></li>
+          <li><span class="warn">!</span><span>It also performs poorly on new data.</span></li>
+          <li><span class="tick">✓</span><span>The goal is to find a balanced model: not too complex, not too simple.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="integration">
+      <div class="section-title">
+        <div class="icon">🔌</div>
+        <h2><span class="challenge-number">8</span>Software Integration</h2>
+      </div>
+      <div class="card">
+        <p>An ML model usually helps users as part of a software product. So after building the model, the next big task is to integrate it into real software.</p>
+
+        <div class="grid-3" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--blue); box-shadow:none;">
+            <div class="emoji-box">🌐</div>
+            <h3>Web App</h3>
+            <p>Deploy through a website or backend service.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--green); box-shadow:none;">
+            <div class="emoji-box">📱</div>
+            <h3>Mobile App</h3>
+            <p>Use in Android or iOS apps.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--purple); box-shadow:none;">
+            <div class="emoji-box">🖥️</div>
+            <h3>Other Platforms</h3>
+            <p>Desktop, server, embedded, or special environments.</p>
+          </article>
+        </div>
+
+        <p style="margin-top:16px;">The teacher points out that ML is still a developing ecosystem. Some languages and platforms do not support ML as smoothly as Python does. Compatibility between libraries and platforms can also be difficult.</p>
+        <div class="note">Important advice: Do not stop after making a model. Convert it into a product that real users can use.</div>
+      </div>
+    </section>
+
+    <section id="deployment">
+      <div class="section-title">
+        <div class="icon">🚀</div>
+        <h2><span class="challenge-number">9</span>Deployment, Offline Learning, and Online Learning</h2>
+      </div>
+      <div class="card">
+        <p>Deployment means putting the model on a server so users can use it. This is often harder than beginners expect.</p>
+
+        <div class="grid-2" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--orange); box-shadow:none;">
+            <div class="emoji-box">📦</div>
+            <h3>Offline / Batch Deployment</h3>
+            <p>The model is trained offline, uploaded to the server, and updated later by retraining and redeploying.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--teal); box-shadow:none;">
+            <div class="emoji-box">🔄</div>
+            <h3>Online Learning Deployment</h3>
+            <p>The model learns or updates on the server as new data comes. This is powerful but harder to manage.</p>
+          </article>
+        </div>
+
+        <div class="flow-4">
+          <div class="flow-box f-blue"><div><strong>Train</strong><span>Create model</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-green"><div><strong>Deploy</strong><span>Run on server</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-orange"><div><strong>Monitor</strong><span>Check real-time behavior</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-red"><div><strong>Update</strong><span>Retrain or online update</span></div></div>
+        </div>
+
+        <p style="margin-top:16px;">Cloud providers like AWS, GCP, and Azure provide ML deployment services, but production ML still needs careful monitoring, versioning, data handling, and engineering effort.</p>
+        <div class="note">Deployment is not just “upload the model.” It includes serving, monitoring, updating, and maintaining the model in production.</div>
+      </div>
+    </section>
+
+    <section id="cost">
+      <div class="section-title">
+        <div class="icon">💰</div>
+        <h2><span class="challenge-number">10</span>Cost Involved</h2>
+      </div>
+      <div class="card">
+        <p>The teacher says cost becomes clear only when you deploy models at scale. If thousands or lakhs of users use your ML system, hidden costs can become huge.</p>
+
+        <div class="grid-3" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--red); box-shadow:none;">
+            <div class="emoji-box">🖥️</div>
+            <h3>Compute Cost</h3>
+            <p>Training and inference may need powerful servers or GPUs.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--orange); box-shadow:none;">
+            <div class="emoji-box">🗄️</div>
+            <h3>Storage Cost</h3>
+            <p>Data, models, logs, and backups require storage.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--purple); box-shadow:none;">
+            <div class="emoji-box">📡</div>
+            <h3>Serving Cost</h3>
+            <p>Every user request may trigger model inference and server usage.</p>
+          </article>
+        </div>
+
+        <p style="margin-top:16px;">Because of these issues, a dedicated field called <strong>MLOps</strong> is growing. MLOps deals with deploying, monitoring, maintaining, scaling, and managing ML systems in production.</p>
+        <div class="note">Final advice from the video: learn how to turn ML models into real software products and deploy them for active users.</div>
+      </div>
+    </section>
+
+    <section id="checklist">
+      <div class="section-title">
+        <div class="icon">🧾</div>
+        <h2>Practical Checklist for Any ML Project</h2>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table aria-label="Machine learning challenges checklist">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Challenge</th>
+                <th>Question to Ask</th>
+                <th>What to Do</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td>Data Collection</td>
+                <td>Where will the data come from?</td>
+                <td>Use internal data, APIs, scraping, or reliable sources.</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>Insufficient / Labeled Data</td>
+                <td>Do we have enough data and labels?</td>
+                <td>Collect more data, label data, or use suitable techniques.</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>Non-Representative Data</td>
+                <td>Does this data represent the real problem?</td>
+                <td>Avoid sampling noise and sampling bias.</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>Poor Quality Data</td>
+                <td>Is the data clean?</td>
+                <td>Handle noise, missing values, outliers, and formats.</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>Irrelevant Features</td>
+                <td>Which columns are useful?</td>
+                <td>Remove useless features and engineer better ones.</td>
+              </tr>
+              <tr>
+                <td>6</td>
+                <td>Overfitting</td>
+                <td>Is the model memorizing training data?</td>
+                <td>Simplify, regularize, validate, and test on unseen data.</td>
+              </tr>
+              <tr>
+                <td>7</td>
+                <td>Underfitting</td>
+                <td>Is the model too simple?</td>
+                <td>Use better features or a more suitable model.</td>
+              </tr>
+              <tr>
+                <td>8</td>
+                <td>Software Integration</td>
+                <td>Can real users use the model?</td>
+                <td>Integrate into web/mobile/backend products.</td>
+              </tr>
+              <tr>
+                <td>9</td>
+                <td>Deployment</td>
+                <td>Can it run reliably in production?</td>
+                <td>Serve, monitor, update, and maintain the model.</td>
+              </tr>
+              <tr>
+                <td>10</td>
+                <td>Cost</td>
+                <td>Can we afford it at scale?</td>
+                <td>Optimize compute, storage, inference, and operations.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="summary">
+      <div class="card summary">
+        <h2>Final Super Simple Summary</h2>
+        <ul>
+          <li><strong>Data collection is hard:</strong> Real-world data is not always available like Kaggle datasets.</li>
+          <li><strong>Data quantity matters:</strong> More useful data can beat a better algorithm with less data.</li>
+          <li><strong>Labels matter:</strong> Supervised learning needs correctly labeled data.</li>
+          <li><strong>Representation matters:</strong> Biased samples create biased models.</li>
+          <li><strong>Quality matters:</strong> Noise, missing values, outliers, and wrong formats must be fixed.</li>
+          <li><strong>Features matter:</strong> Remove irrelevant columns and create meaningful features.</li>
+          <li><strong>Overfitting:</strong> Model memorizes training data and fails on new data.</li>
+          <li><strong>Underfitting:</strong> Model is too simple and fails to learn the pattern.</li>
+          <li><strong>Integration and deployment matter:</strong> A model must become a usable software product.</li>
+          <li><strong>Cost matters:</strong> Production ML has hidden costs, so MLOps is important.</li>
+        </ul>
+      </div>
+    </section>
+
+    <p class="footer-note">Simplified from the video “Challenges in Machine Learning | Problems in Machine Learning” by CampusX. These are original notes, not a word-for-word transcript.</p>
+  </main>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

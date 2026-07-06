@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>08 - Applications of Machine Learning | Easy Notes</title>
+  <style>
+    :root {
+      --bg-1: #eff6ff;
+      --bg-2: #f0fdfa;
+      --ink: #172033;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --primary-2: #38bdf8;
+      --purple: #7c3aed;
+      --pink: #ec4899;
+      --green: #22c55e;
+      --orange: #f59e0b;
+      --red: #ef4444;
+      --teal: #14b8a6;
+      --cyan: #06b6d4;
+      --card: rgba(255, 255, 255, 0.88);
+      --border: rgba(15, 23, 42, 0.10);
+      --shadow: 0 22px 60px rgba(15, 23, 42, 0.12);
+      --radius: 26px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      line-height: 1.7;
+      background:
+        radial-gradient(circle at 10% 7%, rgba(37, 99, 235, 0.18), transparent 30%),
+        radial-gradient(circle at 92% 6%, rgba(20, 184, 166, 0.18), transparent 31%),
+        radial-gradient(circle at 88% 88%, rgba(245, 158, 11, 0.14), transparent 30%),
+        radial-gradient(circle at 12% 88%, rgba(236, 72, 153, 0.13), transparent 28%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    }
+
+    .page {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 64px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 36px;
+      padding: 56px 38px;
+      color: white;
+      background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 64, 175, 0.94)),
+        linear-gradient(45deg, #0f172a, #1e40af);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 370px;
+      height: 370px;
+      border-radius: 50%;
+      right: -130px;
+      top: -130px;
+      background: rgba(56, 189, 248, 0.22);
+    }
+
+    .hero::after {
+      content: "08";
+      position: absolute;
+      right: -12px;
+      bottom: -78px;
+      font-size: 13rem;
+      line-height: 1;
+      font-weight: 1000;
+      letter-spacing: -0.10em;
+      color: rgba(255, 255, 255, 0.06);
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1.25fr 0.88fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      margin-bottom: 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      font-weight: 900;
+      backdrop-filter: blur(12px);
+    }
+
+    h1 {
+      font-size: clamp(2.15rem, 6.8vw, 5rem);
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+      margin-bottom: 18px;
+    }
+
+    .hero p {
+      max-width: 800px;
+      color: rgba(255, 255, 255, 0.90);
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    }
+
+    .hero-visual {
+      min-height: 330px;
+      border-radius: 32px;
+      padding: 22px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.11);
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      backdrop-filter: blur(14px);
+    }
+
+    .app-grid {
+      width: min(350px, 80vw);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      animation: float 4.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .app-tile {
+      min-height: 125px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 14px;
+      border-radius: 24px;
+      color: white;
+      font-weight: 1000;
+      border: 1px solid rgba(255,255,255,0.22);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12), 0 16px 30px rgba(15,23,42,0.16);
+    }
+
+    .app-tile small {
+      display: block;
+      color: rgba(255,255,255,0.88);
+      font-weight: 800;
+      line-height: 1.3;
+      margin-top: 4px;
+    }
+
+    .a1 { background: linear-gradient(135deg, #38bdf8, #2563eb); }
+    .a2 { background: linear-gradient(135deg, #2dd4bf, #0f766e); }
+    .a3 { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .a4 { background: linear-gradient(135deg, #f472b6, #db2777); }
+
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 22px 0 0;
+    }
+
+    .toc a {
+      text-decoration: none;
+      color: #1e40af;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .toc a:hover {
+      transform: translateY(-2px);
+      background: white;
+    }
+
+    section {
+      margin-top: 30px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid var(--border);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    h2 {
+      font-size: clamp(1.55rem, 3.3vw, 2.4rem);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    h3 {
+      font-size: 1.22rem;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin-bottom: 7px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .note {
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 20px;
+      border-left: 7px solid var(--primary-2);
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.10), rgba(20, 184, 166, 0.09));
+      color: #1e40af;
+      font-size: 1.13rem;
+      font-weight: 900;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .mini-card {
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .mini-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 26px 64px rgba(15, 23, 42, 0.15);
+    }
+
+    .mini-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 7px;
+      background: var(--top, var(--primary-2));
+    }
+
+    .emoji-box {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.12), rgba(20, 184, 166, 0.12));
+      border: 1px solid var(--border);
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 12px;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+
+    .flow-4 {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+      gap: 12px;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+
+    .flow-box {
+      min-height: 122px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border-radius: 22px;
+      padding: 18px;
+      color: white;
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+      font-weight: 900;
+    }
+
+    .flow-box strong {
+      display: block;
+      font-size: 1.17rem;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .f-blue { background: linear-gradient(135deg, #60a5fa, #2563eb); }
+    .f-cyan { background: linear-gradient(135deg, #22d3ee, #0891b2); }
+    .f-teal { background: linear-gradient(135deg, #2dd4bf, #0f766e); }
+    .f-green { background: linear-gradient(135deg, #4ade80, #16a34a); }
+    .f-orange { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .f-red { background: linear-gradient(135deg, #fb7185, #e11d48); }
+    .f-purple { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+    .f-pink { background: linear-gradient(135deg, #f472b6, #db2777); }
+
+    .arrow {
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      font-size: 1.9rem;
+      font-weight: 1000;
+    }
+
+    .list {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 11px 12px;
+      border-radius: 15px;
+      background: rgba(248, 250, 252, 0.88);
+      border: 1px solid rgba(100, 116, 139, 0.12);
+    }
+
+    .tick {
+      color: #16a34a;
+      font-weight: 1000;
+    }
+
+    .warn {
+      color: var(--red);
+      font-weight: 1000;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 16px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 860px;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+
+    th {
+      text-align: left;
+      padding: 10px 14px;
+      color: #1e40af;
+      font-size: 0.92rem;
+    }
+
+    td {
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.84);
+      border-top: 1px solid rgba(100, 116, 139, 0.13);
+      border-bottom: 1px solid rgba(100, 116, 139, 0.13);
+      vertical-align: top;
+    }
+
+    td:first-child {
+      border-left: 1px solid rgba(100, 116, 139, 0.13);
+      border-radius: 16px 0 0 16px;
+      font-weight: 1000;
+      color: #1e40af;
+    }
+
+    td:last-child {
+      border-right: 1px solid rgba(100, 116, 139, 0.13);
+      border-radius: 0 16px 16px 0;
+    }
+
+    .sector-number {
+      display: inline-grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 14px;
+      background: var(--primary);
+      color: white;
+      font-weight: 1000;
+      margin-right: 10px;
+      box-shadow: 0 12px 20px rgba(37, 99, 235, 0.18);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .chip {
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid rgba(100, 116, 139, 0.16);
+      font-weight: 900;
+      color: #1e40af;
+      box-shadow: 0 10px 18px rgba(15, 23, 42, 0.05);
+    }
+
+    .sentiment-demo {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .review {
+      display: grid;
+      grid-template-columns: 72px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(100,116,139,0.14);
+    }
+
+    .sentiment-tag {
+      display: grid;
+      place-items: center;
+      min-height: 54px;
+      border-radius: 16px;
+      color: white;
+      font-weight: 1000;
+      text-align: center;
+      font-size: 0.88rem;
+    }
+
+    .positive { background: linear-gradient(135deg, #4ade80, #16a34a); }
+    .negative { background: linear-gradient(135deg, #fb7185, #e11d48); }
+
+    .summary {
+      position: relative;
+      overflow: hidden;
+      color: white;
+      background: linear-gradient(135deg, #0f172a, #1e40af);
+      border: none;
+    }
+
+    .summary::after {
+      content: "B2B";
+      position: absolute;
+      right: -10px;
+      bottom: -56px;
+      font-size: 9rem;
+      font-weight: 1000;
+      letter-spacing: -0.08em;
+      color: rgba(255, 255, 255, 0.055);
+      line-height: 1;
+    }
+
+    .summary h2,
+    .summary ul {
+      position: relative;
+      z-index: 2;
+    }
+
+    .summary ul {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .summary li {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .flow,
+      .flow-4 {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+
+      .app-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 22px, 1160px);
+        padding-top: 12px;
+      }
+
+      .hero {
+        padding: 36px 22px;
+        border-radius: 28px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .review {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+      body { background: white; }
+      .toc { display: none; }
+      .hero,
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="badge">📘 08 • Easy ML Notes</div>
+          <h1>Applications of Machine Learning</h1>
+          <p>
+            This video explains how Machine Learning is already used in real products and businesses —
+            not only in consumer apps, but also in B2B systems that help companies reduce cost, improve operations, and increase profit.
+          </p>
+        </div>
+        <div class="hero-visual" aria-label="Machine learning application sectors visual">
+          <div class="app-grid">
+            <div class="app-tile a1">Retail<small>forecasting, profiling, product placement</small></div>
+            <div class="app-tile a2">Banking<small>loans, risk, finance decisions</small></div>
+            <div class="app-tile a3">Transport<small>surge pricing, logistics, routes</small></div>
+            <div class="app-tile a4">Social Media<small>sentiment, ads, market intelligence</small></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Page sections">
+      <a href="#intro">Intro</a>
+      <a href="#b2c-b2b">B2C vs B2B</a>
+      <a href="#retail">Retail</a>
+      <a href="#banking">Banking</a>
+      <a href="#transport">Transportation</a>
+      <a href="#manufacturing">Manufacturing</a>
+      <a href="#social">Social Media</a>
+      <a href="#sentiment">Sentiment Analysis</a>
+      <a href="#table">Cheat Sheet</a>
+      <a href="#summary">Summary</a>
+    </nav>
+
+    <section id="intro">
+      <div class="section-title">
+        <div class="icon">🎯</div>
+        <h2>Why This Video?</h2>
+      </div>
+      <div class="card">
+        <p>The teacher says that before starting heavy coding and mathematics, learners should understand why Machine Learning is worth learning.</p>
+        <p>Machine Learning is not only a future technology. It is already present in our daily lives and in many businesses.</p>
+        <div class="chip-row">
+          <div class="chip">Facebook friend recommendations</div>
+          <div class="chip">YouTube video recommendations</div>
+          <div class="chip">Amazon product recommendations</div>
+          <div class="chip">Chatbots</div>
+          <div class="chip">Targeted ads</div>
+        </div>
+        <div class="note">Main message: ML is already integrated into products so naturally that we often do not even notice it.</div>
+      </div>
+    </section>
+
+    <section id="b2c-b2b">
+      <div class="section-title">
+        <div class="icon">🏢</div>
+        <h2>B2C vs B2B Machine Learning</h2>
+      </div>
+      <div class="card">
+        <p>Most students think of ML through consumer products like YouTube, WhatsApp, Amazon, or Facebook. These are <strong>B2C</strong> examples.</p>
+        <p>The video focuses more on <strong>B2B</strong> examples, where Machine Learning helps one business serve another business or improve its operations.</p>
+
+        <div class="grid-2" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--cyan); box-shadow:none;">
+            <div class="emoji-box">🧑‍💻</div>
+            <h3>B2C: Business to Consumer</h3>
+            <p>ML features directly visible to normal users.</p>
+            <ul class="list">
+              <li><span class="tick">✓</span><span>Recommendations</span></li>
+              <li><span class="tick">✓</span><span>Personalized feeds</span></li>
+              <li><span class="tick">✓</span><span>Smart assistants</span></li>
+            </ul>
+          </article>
+
+          <article class="card mini-card" style="--top: var(--green); box-shadow:none;">
+            <div class="emoji-box">🏭</div>
+            <h3>B2B: Business to Business</h3>
+            <p>ML helps companies improve profit, operations, planning, and decisions.</p>
+            <ul class="list">
+              <li><span class="tick">✓</span><span>Demand forecasting</span></li>
+              <li><span class="tick">✓</span><span>Risk scoring</span></li>
+              <li><span class="tick">✓</span><span>Predictive maintenance</span></li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="note">The important idea: B2B ML can be even more valuable because it can directly affect business profit and loss.</div>
+      </div>
+    </section>
+
+    <section id="retail">
+      <div class="section-title">
+        <div class="icon">🛒</div>
+        <h2><span class="sector-number">1</span>Retail and E-Commerce</h2>
+      </div>
+      <div class="card">
+        <p>Retail is one of the biggest areas where ML is used. Without ML, large retail and e-commerce businesses would be much harder to run efficiently.</p>
+
+        <div class="grid-3" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--blue); box-shadow:none;">
+            <div class="emoji-box">📦</div>
+            <h3>Inventory Forecasting</h3>
+            <p>Before a large sale, companies predict which products will sell more and which products do not need extra stock.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--pink); box-shadow:none;">
+            <div class="emoji-box">👤</div>
+            <h3>Customer Profiling</h3>
+            <p>Stores track buying behavior using phone numbers and purchase history to understand customer interests.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--orange); box-shadow:none;">
+            <div class="emoji-box">🧺</div>
+            <h3>Product Placement</h3>
+            <p>ML finds which products are often bought together, so stores can place them near each other.</p>
+          </article>
+        </div>
+
+        <h3 style="margin-top:22px;">Example A: Amazon sale stock planning</h3>
+        <p>The video gives an example of Amazon’s Great Indian Festival style sales. If an e-commerce company has crores of products, it cannot blindly increase stock for every product.</p>
+        <div class="flow-4">
+          <div class="flow-box f-blue"><div><strong>Past Sales Data</strong><span>Previous years and normal demand</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-cyan"><div><strong>ML Forecasting</strong><span>Predict sale demand</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-green"><div><strong>Stock Decision</strong><span>Increase stock where needed</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-orange"><div><strong>Save Money</strong><span>Avoid overstock and shortage</span></div></div>
+        </div>
+        <div class="note">A small mistake in stock planning can cause crores of rupees of loss, so ML-based demand prediction is very valuable.</div>
+
+        <h3 style="margin-top:22px;">Example B: Why stores ask for your phone number</h3>
+        <p>Retail stores like Big Bazaar or Spencer’s often ask for your phone number while billing. The obvious use is SMS offers, but the deeper value is customer profiling.</p>
+        <ul class="list">
+          <li><span class="tick">✓</span><span>If you buy health-related products, the system may mark you as health-conscious.</span></li>
+          <li><span class="tick">✓</span><span>If you buy sports products, cosmetics, spicy food, baby products, etc., your interest profile is updated.</span></li>
+          <li><span class="tick">✓</span><span>This profile can be used for targeted marketing and better conversion.</span></li>
+        </ul>
+        <div class="note">The video mentions the famous idea: if you are not paying for the product, then you may be the product — because your data has value.</div>
+
+        <h3 style="margin-top:22px;">Example C: Association rule learning</h3>
+        <p>In supermarkets, companies need to decide which products should be placed near each other. ML can find correlations between products.</p>
+        <p>If two products are frequently bought together, they can be placed together to increase sales. The video recalls the famous diapers-and-beer type example.</p>
+      </div>
+    </section>
+
+    <section id="banking">
+      <div class="section-title">
+        <div class="icon">🏦</div>
+        <h2><span class="sector-number">2</span>Banking, Finance, Insurance, and Trading</h2>
+      </div>
+      <div class="card">
+        <p>Banking and finance use ML heavily for decision-making, risk detection, and customer targeting.</p>
+
+        <div class="grid-3" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--red); box-shadow:none;">
+            <div class="emoji-box">📉</div>
+            <h3>Loan Default Prediction</h3>
+            <p>A bank compares your profile with past defaulters and predicts whether you may fail to repay.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--blue); box-shadow:none;">
+            <div class="emoji-box">📍</div>
+            <h3>Branch Planning</h3>
+            <p>ML can help decide where new branches should be opened based on customer and location data.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--green); box-shadow:none;">
+            <div class="emoji-box">🎯</div>
+            <h3>Promotion Planning</h3>
+            <p>Banks can decide which offers or plans should be promoted to which customer groups or cities.</p>
+          </article>
+        </div>
+
+        <h3 style="margin-top:22px;">Loan approval flow</h3>
+        <div class="flow-4">
+          <div class="flow-box f-blue"><div><strong>Applicant Profile</strong><span>Income, history, behavior, etc.</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-purple"><div><strong>Compare with Past Data</strong><span>Defaulters and good borrowers</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-orange"><div><strong>Risk Score</strong><span>Probability of default</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-green"><div><strong>Decision</strong><span>Approve, reject, or review</span></div></div>
+        </div>
+
+        <ul class="list">
+          <li><span class="tick">✓</span><span>ML can act as a first-level filter before a human loan officer checks the case.</span></li>
+          <li><span class="tick">✓</span><span>ML is also used in insurance, share market analysis, and trading-related systems.</span></li>
+          <li><span class="tick">✓</span><span>Finance companies use ML to reduce risk and improve business decisions.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="transport">
+      <div class="section-title">
+        <div class="icon">🚕</div>
+        <h2><span class="sector-number">3</span>Transportation and Logistics</h2>
+      </div>
+      <div class="card">
+        <p>Transportation companies use ML for demand forecasting, pricing, driver allocation, and route optimization.</p>
+
+        <h3>Example: Ola/Uber surge pricing</h3>
+        <p>The video explains surge pricing using Ola/Uber. During office hours, festivals, or high-demand periods, the number of riders in an area may be much larger than the number of available drivers.</p>
+
+        <div class="flow-4">
+          <div class="flow-box f-red"><div><strong>High Demand</strong><span>Many customers in one area</span></div></div>
+          <div class="arrow">+</div>
+          <div class="flow-box f-orange"><div><strong>Low Supply</strong><span>Few drivers nearby</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-purple"><div><strong>Driver Incentive</strong><span>Heatmap / multiplier shown</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-green"><div><strong>Supply Balancing</strong><span>More drivers move there</span></div></div>
+        </div>
+
+        <p style="margin-top:16px;">Drivers may see zones where they can earn 1.8x, 3.2x, etc. This encourages them to move to high-demand areas. The extra amount is usually charged from the customer as surge price.</p>
+
+        <div class="grid-3" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--orange); box-shadow:none;">
+            <div class="emoji-box">📈</div>
+            <h3>Demand Forecasting</h3>
+            <p>Predict where rides will be needed soon.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--blue); box-shadow:none;">
+            <div class="emoji-box">🧭</div>
+            <h3>Route Optimization</h3>
+            <p>Find efficient routes for rides and deliveries.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--teal); box-shadow:none;">
+            <div class="emoji-box">📦</div>
+            <h3>Logistics Planning</h3>
+            <p>Deliver many orders using optimized paths and schedules.</p>
+          </article>
+        </div>
+
+        <div class="note">Transportation ML is not only about price. It also helps with supply-demand balance, delivery planning, traffic, and maps.</div>
+      </div>
+    </section>
+
+    <section id="manufacturing">
+      <div class="section-title">
+        <div class="icon">🏭</div>
+        <h2><span class="sector-number">4</span>Manufacturing and Predictive Maintenance</h2>
+      </div>
+      <div class="card">
+        <p>Manufacturing companies use automation, robotic arms, sensors, and ML to avoid breakdowns and delays.</p>
+
+        <h3>Example: Tesla-like automated factory</h3>
+        <p>The video gives the example of highly automated car factories. If one important robotic arm fails, the entire production line may stop. This is dangerous when the company already has customer orders and tight delivery schedules.</p>
+
+        <div class="flow-4">
+          <div class="flow-box f-blue"><div><strong>Sensors</strong><span>Temperature, RPM, pressure, vibration</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-cyan"><div><strong>Continuous Data</strong><span>Sent to server</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-orange"><div><strong>ML Detection</strong><span>Find abnormal pattern</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-green"><div><strong>Maintenance</strong><span>Fix before failure</span></div></div>
+        </div>
+
+        <ul class="list">
+          <li><span class="tick">✓</span><span>A machine usually does not fail suddenly; its metrics may slowly change first.</span></li>
+          <li><span class="tick">✓</span><span>For example, RPM or pressure may gradually shift from normal values.</span></li>
+          <li><span class="tick">✓</span><span>ML can detect these early signs and alert engineers.</span></li>
+        </ul>
+
+        <div class="note">Predictive maintenance means predicting a possible failure before the machine actually breaks, then fixing it in advance.</div>
+      </div>
+    </section>
+
+    <section id="social">
+      <div class="section-title">
+        <div class="icon">🐦</div>
+        <h2><span class="sector-number">5</span>Social Media and Consumer Internet</h2>
+      </div>
+      <div class="card">
+        <p>The video gives a detailed example around Twitter and sentiment analysis. The central idea is that social platforms have huge amounts of real-time human opinion data.</p>
+        <p>If this data is processed intelligently, it can be turned into business intelligence.</p>
+
+        <div class="grid-3" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--pink); box-shadow:none;">
+            <div class="emoji-box">💬</div>
+            <h3>Public Opinion</h3>
+            <p>People express real opinions through tweets, posts, reviews, and comments.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--purple); box-shadow:none;">
+            <div class="emoji-box">🧠</div>
+            <h3>Sentiment Analysis</h3>
+            <p>ML can identify whether text is positive, negative, or neutral.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--green); box-shadow:none;">
+            <div class="emoji-box">💹</div>
+            <h3>Business Value</h3>
+            <p>Companies can use this intelligence for marketing, trading, politics, sports, and entertainment.</p>
+          </article>
+        </div>
+
+        <div class="note">The Twitter monetization story in the video is presented as an illustrative idea: social sentiment data can be extremely valuable if the right questions are asked.</div>
+      </div>
+    </section>
+
+    <section id="sentiment">
+      <div class="section-title">
+        <div class="icon">😊</div>
+        <h2>Sentiment Analysis Explained</h2>
+      </div>
+      <div class="card">
+        <p><strong>Sentiment Analysis</strong> means reading text and identifying the emotion/opinion behind it — positive, negative, or sometimes neutral.</p>
+        <p>The video gives an example of movie reviews. A system can read IMDB-style reviews and decide whether the review is praising the movie or criticizing it.</p>
+
+        <div class="sentiment-demo">
+          <div class="review">
+            <div class="sentiment-tag positive">Positive</div>
+            <div><strong>Example meaning:</strong> “Brilliant cinematography, realistic scenes, amazing experience.” The system identifies praise.</div>
+          </div>
+          <div class="review">
+            <div class="sentiment-tag negative">Negative</div>
+            <div><strong>Example meaning:</strong> “Very disappointed, felt cheated after spending money.” The system identifies dissatisfaction.</div>
+          </div>
+        </div>
+
+        <h3 style="margin-top:22px;">Election sentiment example</h3>
+        <p>The video explains a possible election scenario:</p>
+        <div class="flow-4">
+          <div class="flow-box f-blue"><div><strong>Collect Tweets</strong><span>Using election hashtag</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-purple"><div><strong>Analyze Sentiment</strong><span>Positive/negative for candidates</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-orange"><div><strong>Estimate Mood</strong><span>Public opinion signal</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-green"><div><strong>Business Use</strong><span>Sell intelligence to interested firms</span></div></div>
+        </div>
+
+        <p style="margin-top:16px;">If sentiment data suggests that a party or candidate is likely to win, financial firms or stock market players may use that information to make investment decisions. Similar ideas can be used in sports, entertainment, brand monitoring, and product launches.</p>
+        <div class="note">Key idea: Social media data + ML = real-time intelligence about what people are thinking.</div>
+      </div>
+    </section>
+
+    <section id="other-fields">
+      <div class="section-title">
+        <div class="icon">🚀</div>
+        <h2>Other Fields Mentioned</h2>
+      </div>
+      <div class="card">
+        <p>The video mainly discusses five sectors, but also mentions that ML is used in many other important areas.</p>
+        <div class="grid-4" style="margin-top:18px;">
+          <article class="card mini-card" style="--top: var(--purple); box-shadow:none;">
+            <div class="emoji-box">🛰️</div>
+            <h3>Space Exploration</h3>
+            <p>Analysis, automation, navigation, and research support.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--green); box-shadow:none;">
+            <div class="emoji-box">🏥</div>
+            <h3>Medical Field</h3>
+            <p>Diagnosis support, imaging, drug discovery, and healthcare predictions.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--red); box-shadow:none;">
+            <div class="emoji-box">🛡️</div>
+            <h3>Defense</h3>
+            <p>Surveillance, detection, planning, and advanced automation.</p>
+          </article>
+          <article class="card mini-card" style="--top: var(--orange); box-shadow:none;">
+            <div class="emoji-box">📊</div>
+            <h3>Business Analytics</h3>
+            <p>Finding hidden patterns and improving business strategy.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="table">
+      <div class="section-title">
+        <div class="icon">🧾</div>
+        <h2>Application Cheat Sheet</h2>
+      </div>
+      <div class="card">
+        <div class="table-wrap">
+          <table aria-label="Machine learning applications cheat sheet">
+            <thead>
+              <tr>
+                <th>Sector</th>
+                <th>ML Application</th>
+                <th>Data Used</th>
+                <th>Business Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Retail / E-Commerce</td>
+                <td>Demand forecasting and inventory planning</td>
+                <td>Past sales, season, festival/sale history</td>
+                <td>Avoid overstock, avoid shortage, reduce loss</td>
+              </tr>
+              <tr>
+                <td>Retail Stores</td>
+                <td>Customer profiling and targeted marketing</td>
+                <td>Phone number, purchase history, product categories</td>
+                <td>Better ads, better conversion, customer segmentation</td>
+              </tr>
+              <tr>
+                <td>Supermarkets</td>
+                <td>Association rule learning and product placement</td>
+                <td>Billing/transaction data</td>
+                <td>Place related products together and increase sales</td>
+              </tr>
+              <tr>
+                <td>Banking</td>
+                <td>Loan risk/default prediction</td>
+                <td>Applicant profile and past borrower data</td>
+                <td>Reduce risk and improve loan decisions</td>
+              </tr>
+              <tr>
+                <td>Finance / Insurance</td>
+                <td>Risk scoring, offers, trading insights</td>
+                <td>Customer data, market data, policy data</td>
+                <td>Better pricing, planning, and investment decisions</td>
+              </tr>
+              <tr>
+                <td>Transportation</td>
+                <td>Surge pricing and demand forecasting</td>
+                <td>Ride requests, driver locations, time, events</td>
+                <td>Balance demand and supply</td>
+              </tr>
+              <tr>
+                <td>Logistics</td>
+                <td>Route optimization</td>
+                <td>Delivery addresses, traffic, distance, time</td>
+                <td>Faster delivery and lower cost</td>
+              </tr>
+              <tr>
+                <td>Manufacturing</td>
+                <td>Predictive maintenance</td>
+                <td>Sensor data: temperature, RPM, pressure, vibration</td>
+                <td>Prevent machine failure and production loss</td>
+              </tr>
+              <tr>
+                <td>Social Media</td>
+                <td>Sentiment analysis</td>
+                <td>Tweets, comments, reviews, hashtags</td>
+                <td>Understand public opinion and create business intelligence</td>
+              </tr>
+              <tr>
+                <td>Consumer Internet</td>
+                <td>Recommendations and personalization</td>
+                <td>User clicks, watch history, purchases, behavior</td>
+                <td>Better user engagement and revenue</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="motivation">
+      <div class="section-title">
+        <div class="icon">🔥</div>
+        <h2>Main Motivation from the Video</h2>
+      </div>
+      <div class="card">
+        <p>The teacher’s goal is to motivate learners before the course becomes more technical. Machine Learning is a powerful tool that can transform businesses and careers.</p>
+        <div class="note">If you learn ML properly, you can build products and systems that solve real problems and create real value.</div>
+        <ul class="list">
+          <li><span class="tick">✓</span><span>ML can help companies make better decisions.</span></li>
+          <li><span class="tick">✓</span><span>ML can reduce cost and increase profit.</span></li>
+          <li><span class="tick">✓</span><span>ML can create new business models from data.</span></li>
+          <li><span class="tick">✓</span><span>ML can be useful in almost every sector.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="summary">
+      <div class="card summary">
+        <h2>Final Super Simple Summary</h2>
+        <ul>
+          <li><strong>ML is already everywhere:</strong> recommendations, ads, chatbots, feeds, and business systems.</li>
+          <li><strong>B2C examples</strong> are visible to users, but <strong>B2B applications</strong> can create huge business value.</li>
+          <li><strong>Retail:</strong> ML predicts demand, manages stock, profiles customers, and improves product placement.</li>
+          <li><strong>Banking:</strong> ML helps approve/reject loans, detect risk, plan branches, and personalize offers.</li>
+          <li><strong>Transportation:</strong> ML powers surge pricing, demand forecasting, driver allocation, maps, and logistics.</li>
+          <li><strong>Manufacturing:</strong> ML uses sensor data for predictive maintenance and prevents costly downtime.</li>
+          <li><strong>Social media:</strong> ML can analyze sentiment from tweets, reviews, and posts to understand public opinion.</li>
+          <li><strong>Main lesson:</strong> Data + ML can turn hidden patterns into decisions, profit, and better products.</li>
+        </ul>
+      </div>
+    </section>
+
+    <p class="footer-note">Simplified from the video “Application of Machine Learning | Real Life Machine Learning Applications” by CampusX. These are original notes, not a word-for-word transcript.</p>
+  </main>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

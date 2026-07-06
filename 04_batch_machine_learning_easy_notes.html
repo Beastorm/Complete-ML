@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>04 - Batch Machine Learning | Easy Notes</title>
+  <style>
+    :root {
+      --bg-1: #fff7ed;
+      --bg-2: #eef2ff;
+      --ink: #172033;
+      --muted: #64748b;
+      --primary: #ea580c;
+      --primary-2: #f97316;
+      --blue: #4f46e5;
+      --cyan: #06b6d4;
+      --green: #22c55e;
+      --red: #ef4444;
+      --purple: #7c3aed;
+      --yellow: #f59e0b;
+      --card: rgba(255, 255, 255, 0.88);
+      --border: rgba(15, 23, 42, 0.10);
+      --shadow: 0 22px 60px rgba(15, 23, 42, 0.12);
+      --radius: 26px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      line-height: 1.7;
+      background:
+        radial-gradient(circle at 10% 7%, rgba(249, 115, 22, 0.22), transparent 30%),
+        radial-gradient(circle at 92% 6%, rgba(79, 70, 229, 0.18), transparent 31%),
+        radial-gradient(circle at 88% 88%, rgba(6, 182, 212, 0.15), transparent 30%),
+        radial-gradient(circle at 12% 88%, rgba(245, 158, 11, 0.15), transparent 28%),
+        linear-gradient(135deg, var(--bg-1), var(--bg-2));
+    }
+
+    .page {
+      width: min(1140px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 64px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 36px;
+      padding: 56px 38px;
+      color: white;
+      background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(154, 52, 18, 0.94)),
+        linear-gradient(45deg, #0f172a, #9a3412);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      right: -130px;
+      top: -130px;
+      background: rgba(251, 146, 60, 0.22);
+    }
+
+    .hero::after {
+      content: "04";
+      position: absolute;
+      right: -12px;
+      bottom: -78px;
+      font-size: 13rem;
+      line-height: 1;
+      font-weight: 1000;
+      letter-spacing: -0.10em;
+      color: rgba(255, 255, 255, 0.06);
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1.22fr 0.9fr;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      margin-bottom: 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      font-weight: 900;
+      backdrop-filter: blur(12px);
+    }
+
+    h1 {
+      font-size: clamp(2.15rem, 6.8vw, 5rem);
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+      margin-bottom: 18px;
+    }
+
+    .hero p {
+      max-width: 760px;
+      color: rgba(255, 255, 255, 0.90);
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+    }
+
+    .hero-visual {
+      min-height: 320px;
+      border-radius: 32px;
+      padding: 22px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 255, 255, 0.11);
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      backdrop-filter: blur(14px);
+    }
+
+    .batch-stack {
+      width: min(330px, 78vw);
+      display: grid;
+      gap: 12px;
+      animation: float 4.5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .batch-row {
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.13);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .batch-icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      font-size: 1.5rem;
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .batch-row strong {
+      display: block;
+      line-height: 1.2;
+    }
+
+    .batch-row small {
+      color: rgba(255, 255, 255, 0.82);
+      font-weight: 700;
+    }
+
+    .toc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 22px 0 0;
+    }
+
+    .toc a {
+      text-decoration: none;
+      color: #9a3412;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.06);
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .toc a:hover {
+      transform: translateY(-2px);
+      background: white;
+    }
+
+    section {
+      margin-top: 30px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid var(--border);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    h2 {
+      font-size: clamp(1.55rem, 3.3vw, 2.4rem);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    h3 {
+      font-size: 1.22rem;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+      margin-bottom: 7px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .note {
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 20px;
+      border-left: 7px solid var(--primary-2);
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.11), rgba(79, 70, 229, 0.08));
+      color: #9a3412;
+      font-size: 1.13rem;
+      font-weight: 900;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      gap: 12px;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+
+    .flow-4 {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+      gap: 12px;
+      align-items: stretch;
+      margin-top: 18px;
+    }
+
+    .flow-box {
+      min-height: 122px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border-radius: 22px;
+      padding: 18px;
+      color: white;
+      box-shadow: 0 16px 32px rgba(15, 23, 42, 0.12);
+      font-weight: 900;
+    }
+
+    .flow-box strong {
+      display: block;
+      font-size: 1.35rem;
+      line-height: 1.1;
+      margin-bottom: 6px;
+    }
+
+    .f-orange { background: linear-gradient(135deg, #fb923c, #ea580c); }
+    .f-blue { background: linear-gradient(135deg, #818cf8, #4f46e5); }
+    .f-cyan { background: linear-gradient(135deg, #22d3ee, #0891b2); }
+    .f-yellow { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .f-green { background: linear-gradient(135deg, #4ade80, #16a34a); }
+    .f-red { background: linear-gradient(135deg, #fb7185, #e11d48); }
+    .f-purple { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+
+    .arrow {
+      display: grid;
+      place-items: center;
+      color: var(--primary);
+      font-size: 1.9rem;
+      font-weight: 1000;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .mini-card {
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .mini-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 26px 64px rgba(15, 23, 42, 0.15);
+    }
+
+    .mini-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 7px;
+      background: var(--top, var(--primary-2));
+    }
+
+    .emoji-box {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, rgba(249, 115, 22, 0.12), rgba(79, 70, 229, 0.12));
+      border: 1px solid var(--border);
+    }
+
+    .list {
+      list-style: none;
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .list li {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 11px 12px;
+      border-radius: 15px;
+      background: rgba(248, 250, 252, 0.88);
+      border: 1px solid rgba(100, 116, 139, 0.12);
+    }
+
+    .tick {
+      color: #16a34a;
+      font-weight: 1000;
+    }
+
+    .warn {
+      color: var(--red);
+      font-weight: 1000;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin-top: 16px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 720px;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+    }
+
+    th {
+      text-align: left;
+      padding: 10px 14px;
+      color: #9a3412;
+      font-size: 0.92rem;
+    }
+
+    td {
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.84);
+      border-top: 1px solid rgba(100, 116, 139, 0.13);
+      border-bottom: 1px solid rgba(100, 116, 139, 0.13);
+      vertical-align: top;
+    }
+
+    td:first-child {
+      border-left: 1px solid rgba(100, 116, 139, 0.13);
+      border-radius: 16px 0 0 16px;
+      font-weight: 1000;
+      color: #9a3412;
+    }
+
+    td:last-child {
+      border-right: 1px solid rgba(100, 116, 139, 0.13);
+      border-radius: 0 16px 16px 0;
+    }
+
+    .cycle {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      align-items: center;
+      margin-top: 18px;
+    }
+
+    .cycle-step {
+      min-height: 125px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border-radius: 22px;
+      padding: 16px;
+      background: white;
+      border: 1px solid rgba(100, 116, 139, 0.14);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+      font-weight: 900;
+    }
+
+    .cycle-step span {
+      display: block;
+      font-size: 1.85rem;
+      margin-bottom: 6px;
+    }
+
+    .summary {
+      position: relative;
+      overflow: hidden;
+      color: white;
+      background: linear-gradient(135deg, #0f172a, #9a3412);
+      border: none;
+    }
+
+    .summary::after {
+      content: "BATCH";
+      position: absolute;
+      right: -10px;
+      bottom: -44px;
+      font-size: 6.2rem;
+      font-weight: 1000;
+      letter-spacing: -0.08em;
+      color: rgba(255, 255, 255, 0.055);
+      line-height: 1;
+    }
+
+    .summary h2,
+    .summary ul {
+      position: relative;
+      z-index: 2;
+    }
+
+    .summary ul {
+      list-style: none;
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .summary li {
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.10);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 24px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .grid-2,
+      .grid-3,
+      .grid-4,
+      .flow,
+      .flow-4,
+      .cycle {
+        grid-template-columns: 1fr;
+      }
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 22px, 1140px);
+        padding-top: 12px;
+      }
+
+      .hero {
+        padding: 36px 22px;
+        border-radius: 28px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .summary::after {
+        font-size: 4.6rem;
+      }
+    }
+
+    @media print {
+      body { background: white; }
+      .toc { display: none; }
+      .hero,
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="badge">📘 04 • Easy ML Notes</div>
+          <h1>Batch Machine Learning</h1>
+          <p>
+            Understand Batch or Offline Learning: train the model using the full dataset,
+            test it, deploy it, and retrain it later when new data arrives.
+          </p>
+        </div>
+        <div class="hero-visual" aria-label="Batch machine learning process visual">
+          <div class="batch-stack">
+            <div class="batch-row">
+              <div class="batch-icon">📦</div>
+              <div><strong>Full Data Batch</strong><small>Use all available data together</small></div>
+            </div>
+            <div class="batch-row">
+              <div class="batch-icon">💻</div>
+              <div><strong>Train Offline</strong><small>Usually on developer/data scientist machine</small></div>
+            </div>
+            <div class="batch-row">
+              <div class="batch-icon">🚀</div>
+              <div><strong>Deploy Model</strong><small>Put trained model on server</small></div>
+            </div>
+            <div class="batch-row">
+              <div class="batch-icon">🔁</div>
+              <div><strong>Retrain Later</strong><small>Repeat when data changes</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <nav class="toc" aria-label="Page sections">
+      <a href="#production">Production</a>
+      <a href="#meaning">Meaning</a>
+      <a href="#flow">Process</a>
+      <a href="#examples">Examples</a>
+      <a href="#retraining">Retraining</a>
+      <a href="#advantages">Advantages</a>
+      <a href="#problems">Problems</a>
+      <a href="#comparison">Batch vs Online</a>
+      <a href="#summary">Summary</a>
+    </nav>
+
+    <section id="production">
+      <div class="section-title">
+        <div class="icon">🌍</div>
+        <h2>1. First: What is Production?</h2>
+      </div>
+      <div class="card">
+        <p>When you build software or a Machine Learning model on your own computer, that is usually the <strong>development environment</strong>.</p>
+        <p>When you put it on a server so real users can use it, that real-world running environment is called <strong>production</strong>.</p>
+
+        <div class="flow">
+          <div class="flow-box f-blue"><div><strong>Development</strong><span>Your computer</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-orange"><div><strong>Server</strong><span>Deploy model</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-green"><div><strong>Production</strong><span>Real users use it</span></div></div>
+        </div>
+
+        <div class="note">This video explains ML types based on how a model behaves after going into production.</div>
+      </div>
+    </section>
+
+    <section id="meaning">
+      <div class="section-title">
+        <div class="icon">💡</div>
+        <h2>2. What is Batch Machine Learning?</h2>
+      </div>
+      <div class="card">
+        <p><strong>Batch Machine Learning</strong>, also called <strong>Offline Learning</strong>, is the traditional way of training ML models.</p>
+        <p>In this method, we train the model using the complete available dataset at once. Training is usually done offline, not directly on the production server.</p>
+        <div class="note">Simple meaning: Train once using the full data, then deploy the trained model.</div>
+      </div>
+    </section>
+
+    <section id="flow">
+      <div class="section-title">
+        <div class="icon">🔄</div>
+        <h2>3. Batch Learning Process</h2>
+      </div>
+      <div class="card">
+        <p>The basic process is simple:</p>
+        <div class="flow-4">
+          <div class="flow-box f-orange"><div><strong>Data</strong><span>Full dataset</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-blue"><div><strong>Train</strong><span>Offline training</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-cyan"><div><strong>Test</strong><span>Check performance</span></div></div>
+          <div class="arrow">→</div>
+          <div class="flow-box f-green"><div><strong>Deploy</strong><span>Model predicts for users</span></div></div>
+        </div>
+        <div class="note">After deployment, the model usually only predicts. It does not automatically learn from new data.</div>
+      </div>
+    </section>
+
+    <section id="examples">
+      <div class="section-title">
+        <div class="icon">🌟</div>
+        <h2>4. Easy Examples</h2>
+      </div>
+      <div class="grid-3">
+        <article class="card mini-card" style="--top: var(--primary-2);">
+          <div class="emoji-box">🎬</div>
+          <h3>Movie Recommendation</h3>
+          <p>Train a recommendation engine using old user data, then deploy it to suggest movies to users.</p>
+        </article>
+
+        <article class="card mini-card" style="--top: var(--blue);">
+          <div class="emoji-box">📧</div>
+          <h3>Spam Classifier</h3>
+          <p>Train a spam detector on existing emails, then use it to classify new emails as spam or not spam.</p>
+        </article>
+
+        <article class="card mini-card" style="--top: var(--green);">
+          <div class="emoji-box">🏠</div>
+          <h3>House Price Model</h3>
+          <p>Train a model on old house sales data, then deploy it to predict prices for new houses.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="retraining">
+      <div class="section-title">
+        <div class="icon">🔁</div>
+        <h2>5. Why Do We Need Retraining?</h2>
+      </div>
+      <div class="card">
+        <p>The biggest issue with Batch Learning is that the model becomes <strong>static</strong> after training.</p>
+        <p>But the real world keeps changing. New movies are released, spammers change techniques, users develop new interests, and business data evolves.</p>
+
+        <div class="cycle">
+          <div class="cycle-step"><div><span>📥</span>New data arrives</div></div>
+          <div class="arrow">→</div>
+          <div class="cycle-step"><div><span>📦</span>Combine old + new data</div></div>
+          <div class="arrow">→</div>
+          <div class="cycle-step"><div><span>🧠</span>Retrain model</div></div>
+        </div>
+        <div class="cycle">
+          <div class="cycle-step"><div><span>🧪</span>Test model</div></div>
+          <div class="arrow">→</div>
+          <div class="cycle-step"><div><span>🚀</span>Redeploy</div></div>
+          <div class="arrow">→</div>
+          <div class="cycle-step"><div><span>🔄</span>Repeat regularly</div></div>
+        </div>
+
+        <div class="note">Retraining can happen daily, weekly, monthly, or whenever enough new data is available.</div>
+      </div>
+    </section>
+
+    <section id="advantages">
+      <div class="section-title">
+        <div class="icon">✅</div>
+        <h2>6. Advantages of Batch Learning</h2>
+      </div>
+      <div class="grid-3">
+        <article class="card mini-card" style="--top: var(--green);">
+          <div class="emoji-box">👍</div>
+          <h3>Simple to Understand</h3>
+          <p>Train, test, deploy. The workflow is clear and easy for beginners.</p>
+        </article>
+
+        <article class="card mini-card" style="--top: var(--blue);">
+          <div class="emoji-box">🛡️</div>
+          <h3>Stable in Production</h3>
+          <p>The model does not change suddenly after deployment, so behavior is easier to control.</p>
+        </article>
+
+        <article class="card mini-card" style="--top: var(--purple);">
+          <div class="emoji-box">🧰</div>
+          <h3>Widely Used</h3>
+          <p>Many real-world ML systems still use Batch Learning because it is practical and reliable.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="problems">
+      <div class="section-title">
+        <div class="icon">⚠️</div>
+        <h2>7. Problems with Batch Learning</h2>
+      </div>
+      <div class="grid-2">
+        <article class="card mini-card" style="--top: var(--red);">
+          <div class="emoji-box">📚</div>
+          <h3>Very Large Data</h3>
+          <p>If the dataset becomes huge, retraining on the full data again and again can become difficult.</p>
+          <ul class="list">
+            <li><span class="warn">!</span><span>Training may take a long time.</span></li>
+            <li><span class="warn">!</span><span>Hardware may not handle the full dataset.</span></li>
+            <li><span class="warn">!</span><span>Cost can increase.</span></li>
+          </ul>
+        </article>
+
+        <article class="card mini-card" style="--top: var(--yellow);">
+          <div class="emoji-box">🛰️</div>
+          <h3>Update Limitations</h3>
+          <p>Sometimes the model runs where internet or connectivity is limited, so frequent updates are not possible.</p>
+          <ul class="list">
+            <li><span class="warn">!</span><span>Remote areas with poor internet</span></li>
+            <li><span class="warn">!</span><span>Models running on mobile devices</span></li>
+            <li><span class="warn">!</span><span>Satellites or disconnected systems</span></li>
+          </ul>
+        </article>
+
+        <article class="card mini-card" style="--top: var(--purple);">
+          <div class="emoji-box">⏰</div>
+          <h3>Delayed Reaction</h3>
+          <p>If the model retrains only every 24 hours, it may miss fast-changing trends.</p>
+          <ul class="list">
+            <li><span class="warn">!</span><span>Breaking news may become important suddenly.</span></li>
+            <li><span class="warn">!</span><span>User interest can change quickly.</span></li>
+            <li><span class="warn">!</span><span>Model updates may arrive too late.</span></li>
+          </ul>
+        </article>
+
+        <article class="card mini-card" style="--top: var(--cyan);">
+          <div class="emoji-box">🧊</div>
+          <h3>Static Model</h3>
+          <p>After deployment, the model does not learn automatically unless we retrain and redeploy it.</p>
+          <ul class="list">
+            <li><span class="warn">!</span><span>Old patterns may become outdated.</span></li>
+            <li><span class="warn">!</span><span>New behavior is not learned instantly.</span></li>
+            <li><span class="warn">!</span><span>Performance can slowly decrease.</span></li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section id="comparison">
+      <div class="section-title">
+        <div class="icon">⚖️</div>
+        <h2>8. Batch Learning vs Online Learning</h2>
+      </div>
+      <div class="card">
+        <p>The video introduces two ways a model can behave in production: Batch/Offline Learning and Online Learning.</p>
+        <div class="table-wrap">
+          <table aria-label="Batch learning versus online learning comparison">
+            <thead>
+              <tr>
+                <th>Point</th>
+                <th>Batch / Offline Learning</th>
+                <th>Online Learning</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Training style</td>
+                <td>Train using the full dataset at once.</td>
+                <td>Train incrementally using new data chunks.</td>
+              </tr>
+              <tr>
+                <td>Where training happens</td>
+                <td>Usually offline, before deployment.</td>
+                <td>Can happen while the model is live.</td>
+              </tr>
+              <tr>
+                <td>After deployment</td>
+                <td>Model usually only predicts.</td>
+                <td>Model can keep learning.</td>
+              </tr>
+              <tr>
+                <td>Update process</td>
+                <td>Retrain, test, and redeploy again.</td>
+                <td>Update continuously or frequently.</td>
+              </tr>
+              <tr>
+                <td>Best for</td>
+                <td>Stable problems where data does not change quickly.</td>
+                <td>Fast-changing problems and real-time behavior.</td>
+              </tr>
+              <tr>
+                <td>Difficulty</td>
+                <td>Simpler and more common.</td>
+                <td>More complex and needs monitoring.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="summary">
+      <div class="card summary">
+        <h2>Final Super Simple Summary</h2>
+        <ul>
+          <li><strong>Batch Learning:</strong> Train the model on the full dataset at once.</li>
+          <li><strong>Offline Learning:</strong> Another name for Batch Learning because training usually happens offline.</li>
+          <li><strong>After deployment:</strong> The model predicts, but does not automatically learn.</li>
+          <li><strong>Retraining:</strong> New data is collected, model is trained again, tested, and redeployed.</li>
+          <li><strong>Main advantage:</strong> Simple, stable, and widely used.</li>
+          <li><strong>Main problem:</strong> It can become slow, costly, or outdated when data changes quickly.</li>
+          <li><strong>Memory trick:</strong> Batch ML learns before going live; Online ML keeps learning after going live.</li>
+        </ul>
+      </div>
+    </section>
+
+    <p class="footer-note">Simplified from the video “Batch Machine Learning | Offline Vs Online Learning | Machine Learning Types” by CampusX.</p>
+  </main>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
