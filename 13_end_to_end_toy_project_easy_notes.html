@@ -40,5 +40,7 @@ document.addEventListener('DOMContentLoaded',()=>{setupQuiz(); if(window.initInt
 
 function predictPlacement(){const cg=parseFloat(document.getElementById('cgpa').value)||0;const iq=parseFloat(document.getElementById('iq').value)||0;const score=cg*12+iq/12;const yes=score>=105;document.getElementById('placementResult').innerHTML=`Demo score: <strong>${score.toFixed(1)}</strong><br>Prediction: <strong>${yes?'Placement likely ✅':'Placement not likely ❌'}</strong><br><small>This is only an interactive approximation, not the actual video model.</small>`;}
 function initInteractive(){predictPlacement();}
-</script><script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</script>  <script src="lessons.js"></script>
+  <script src="nav.js"></script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"1954b47c125f43f8b4338b3c4f804e4f","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
 </body></html>
